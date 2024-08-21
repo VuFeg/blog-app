@@ -4,10 +4,10 @@ import { sendVerificationEmail } from "../mailtrap/emails.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 
 const register = async (req, res) => {
-  const { username, name, email, password } = req.body;
+  const { username, email, password } = req.body;
 
   try {
-    if (!username || !name || !email || !password) {
+    if (!username || !email || !password) {
       throw new Error("Please fill in all fields");
     }
 
@@ -26,7 +26,7 @@ const register = async (req, res) => {
     const user = await User.create({
       username,
       email,
-      name,
+      name: username,
       password: bcrypt.hashSync(password, salt),
       verificationToken,
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
@@ -126,4 +126,25 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-export { register, login, logout, verifyEmail };
+const checkAuth = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      user: {
+        ...user._doc,
+        password: undefined,
+      },
+    });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export { register, login, logout, verifyEmail, checkAuth };
