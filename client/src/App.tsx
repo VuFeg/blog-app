@@ -1,4 +1,6 @@
 import { Route, Routes } from "react-router-dom";
+import LogIn from "./components/LogIn";
+import { DangKy } from "./components/DangKy";
 
 const App = () => {
   return (
@@ -14,17 +16,13 @@ const App = () => {
       <Route
         path="/login"
         element={
-          <main>
-            <div>Login</div>
-          </main>
+          <LogIn/>
         }
       />
       <Route
         path="/register"
         element={
-          <main>
-            <div>Register</div>
-          </main>
+          <DangKy/>
         }
       />
     </Routes>
