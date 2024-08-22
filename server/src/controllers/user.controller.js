@@ -1,7 +1,9 @@
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
+import { Token } from "../models/token.model.js";
 import { sendVerificationEmail } from "../mailtrap/emails.js";
-import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { generateToken } from "../utils/generateToken.js";
+import jwt from "jsonwebtoken";
 
 const register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -34,7 +36,11 @@ const register = async (req, res) => {
 
     await user.save();
 
-    generateTokenAndSetCookie(res, user._id);
+    const token = generateToken(user._id);
+    const responseToken = await Token.create({
+      token,
+      userId: user._id,
+    });
 
     await sendVerificationEmail(user.email, verificationToken);
 
@@ -45,6 +51,7 @@ const register = async (req, res) => {
         ...user._doc,
         password: undefined,
       },
+      responseToken,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -70,7 +77,12 @@ const login = async (req, res) => {
     }
 
     user.lastLogin = Date.now();
-    generateTokenAndSetCookie(res, user._id);
+    const token = generateToken(user._id);
+
+    const responseToken = await Token.create({
+      token,
+      userId: user._id,
+    });
 
     await user.save();
 
@@ -81,6 +93,7 @@ const login = async (req, res) => {
         ...user._doc,
         password: undefined,
       },
+      responseToken,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -88,7 +101,13 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  res.clearCookie("token");
+  const { userId } = req.body;
+  const token = await Token.findOneAndDelete(userId);
+  if (!token) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid or expired token" });
+  }
   res.status(200).json({ success: true, message: "Logout success" });
 };
 
@@ -126,9 +145,31 @@ const verifyEmail = async (req, res) => {
   }
 };
 
+const verifyToken = (token) => {
+  if (!token) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized - no token provided" });
+  }
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+  if (!decoded) {
+    return res
+      .status(401)
+      .json({ success: false, message: "Unauthorized - invalid token" });
+  }
+
+  const userId = decoded.userId;
+  return userId;
+};
+
 const checkAuth = async (req, res) => {
+  const token = req.body.token;
+
+  const userId = verifyToken(token);
+
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(userId);
     if (!user) {
       return res
         .status(400)
@@ -143,8 +184,23 @@ const checkAuth = async (req, res) => {
       },
     });
   } catch (error) {
+    res.status(400).json({ success: false, message: "Unauthorized" });
+  }
+};
+
+const token = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const token = await Token.findOne(userId);
+    if (!token) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid or expired token" });
+    }
+    res.status(200).json({ success: true, token });
+  } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
 
-export { register, login, logout, verifyEmail, checkAuth };
+export { register, login, logout, verifyEmail, checkAuth, token };
