@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 
 export const DangNhap = () => {
-  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
 
   const { login }: any = useAuthStore();
 
@@ -14,11 +14,24 @@ export const DangNhap = () => {
 
     try {
       await login(username, password);
-      navigate("/");
+      if (remember) {
+        localStorage.setItem("username", username);
+        localStorage.setItem("password", password);
+      }
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username") || "";
+    const storedPassword = localStorage.getItem("password") || "";
+
+    if (storedUsername && storedPassword) {
+      setUsername(storedUsername);
+      setPassword(storedPassword);
+    }
+  }, []);
 
   return (
     <section className="bg-gray-50">
@@ -39,6 +52,7 @@ export const DangNhap = () => {
                 </label>
                 <input
                   onChange={(e) => setUsername(e.target.value)}
+                  value={username}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                   placeholder="name@company.com"
                   required
@@ -53,6 +67,7 @@ export const DangNhap = () => {
                 </label>
                 <input
                   onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                   type="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
@@ -63,6 +78,7 @@ export const DangNhap = () => {
                 <div className="flex items-start">
                   <div className="flex items-center h-5">
                     <input
+                      onChange={(e) => setRemember(e.target.checked)}
                       id="remember"
                       aria-describedby="remember"
                       type="checkbox"

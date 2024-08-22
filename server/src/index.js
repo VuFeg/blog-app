@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/user.route.js";
 import { connectDB } from "./db/connectDB.js";
 import cookiesParser from "cookie-parser";
+import jwt from "jsonwebtoken";
 
 const PORT = process.env.PORT || 3000;
 
@@ -16,8 +17,12 @@ app.use(cookiesParser());
 
 app.use("/api/auth", authRoutes);
 
-app.get("/", (req, res) => {
-  res.json("Hello World");
+app.post("/", (req, res) => {
+  const token = req.body;
+
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+  res.json({ decoded });
 });
 
 app.listen(PORT, () => {
