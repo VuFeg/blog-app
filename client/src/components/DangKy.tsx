@@ -103,7 +103,7 @@ export const DangKy = () => {
                       className="font-medium text-primary-600 hover:underline"
                       href="#"
                     >
-                      Điều Khoản và Điều Khiện
+                      Điều Khoản và Điều Kiện
                     </a>
                   </label>
                 </div>

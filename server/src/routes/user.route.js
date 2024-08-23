@@ -6,11 +6,10 @@ import {
   verifyEmail,
   checkAuth,
 } from "../controllers/user.controller.js";
-import { verifyToken } from "../../middleware/verifyToken.js";
 
 const router = express.Router();
 
-router.get("/check-auth", verifyToken, checkAuth);
+router.post("/check-auth", checkAuth);
 
 router.post("/register", register);
 router.post("/login", login);

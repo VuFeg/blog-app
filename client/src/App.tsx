@@ -1,40 +1,39 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { DangNhap } from "./components/DangNhap";
 import { DangKy } from "./components/DangKy";
 import XacThucEmail from "./components/XacThucEmail";
-import { useEffect } from "react";
 import { useAuthStore } from "./store/authStore";
+import { useEffect } from "react";
+import Post from "./components/Post";
 
-// const ProtectedRoute = ({ children }: any) => {
-//   const navigate = useNavigate();
-//   const { isAuthenticated, user }: any = useAuthStore();
+const ProtectedRoute = ({ children }: any) => {
+  const { isAuthenticated, user }: any = useAuthStore();
 
-//   if (!isAuthenticated) {
-//     navigate("/login");
-//   }
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
-//   if (!user.isVerified) {
-//     navigate("/verify-email");
-//   }
+  if (!user.isVerified) {
+    return <Navigate to="/verify-email" />;
+  }
 
-//   return children;
-// };
+  return children;
+};
 
-// const RedireAuthenticatedUser = ({ chilren }: any) => {
-//   const navigate = useNavigate();
-//   const { isAuthenticated, user }: any = useAuthStore();
+const RedireAuthenticatedUser = ({ children }: any) => {
+  const { isAuthenticated, user }: any = useAuthStore();
 
-//   if (isAuthenticated && user.isVerified) {
-//     navigate("/");
-//   }
+  if (isAuthenticated && user?.isVerified) {
+    return <Navigate to="/" />;
+  }
 
-//   return chilren;
-// };
+  return children;
+};
 
 const App = () => {
   const navigate = useNavigate();
 
-  const { logout, checkAuth }: any = useAuthStore();
+  const { logout, checkAuth, token }: any = useAuthStore();
 
   const handleLogOut = async () => {
     try {
@@ -45,45 +44,46 @@ const App = () => {
     }
   };
 
-  // useEffect(() => {
-  //   checkAuth();
-  // }, [checkAuth]);
+  useEffect(() => {
+    checkAuth(token);
+  }, [checkAuth]);
 
   return (
     <Routes>
       <Route
         path="/"
         element={
-          // <ProtectedRoute>
-          <main>
-            <div>Home</div>
-            <button onClick={handleLogOut}>Logout</button>
-          </main>
-          // </ProtectedRoute>
+          <ProtectedRoute>
+            <main>
+              <div>Home</div>
+              <Post />
+              <button onClick={handleLogOut}>Logout</button>
+            </main>
+          </ProtectedRoute>
         }
       />
       <Route
         path="/login"
         element={
-          // <RedireAuthenticatedUser>
-          <DangNhap />
-          // </RedireAuthenticatedUser>
+          <RedireAuthenticatedUser>
+            <DangNhap />
+          </RedireAuthenticatedUser>
         }
       />
       <Route
         path="/register"
         element={
-          // <RedireAuthenticatedUser>
-          <DangKy />
-          // </RedireAuthenticatedUser>
+          <RedireAuthenticatedUser>
+            <DangKy />
+          </RedireAuthenticatedUser>
         }
       />
       <Route
         path="/verify-email"
         element={
-          // <RedireAuthenticatedUser>
-          <XacThucEmail />
-          // </RedireAuthenticatedUser>
+          <RedireAuthenticatedUser>
+            <XacThucEmail />
+          </RedireAuthenticatedUser>
         }
       />
     </Routes>
