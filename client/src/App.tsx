@@ -5,6 +5,7 @@ import XacThucEmail from "./components/XacThucEmail";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import Post from "./components/Post";
+import {PostRepCmt} from "./components/PostRepCmt";
 import { Header } from "./components/Header";
 
 const ProtectedRoute = ({ children }: any) => {
@@ -48,8 +49,9 @@ const App = () => {
         element={
           <ProtectedRoute>
             <main>
-              <Header/>
-              <Post />
+              {/* <Header/>
+              <Post /> */}
+              <PostRepCmt/>
             </main>
           </ProtectedRoute>
         }
@@ -62,6 +64,14 @@ const App = () => {
           </RedireAuthenticatedUser>
         }
       />
+      {/* <Route
+        path="/rep-cmt"
+        element={
+          <RedireAuthenticatedUser>
+              <PostRepCmt/>
+          </RedireAuthenticatedUser>
+        }
+      /> */}
       <Route
         path="/register"
         element={
