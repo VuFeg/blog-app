@@ -5,6 +5,8 @@ import XacThucEmail from "./components/XacThucEmail";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 import Post from "./components/Post";
+import {PostRepCmt} from "./components/PostRepCmt";
+import { Header } from "./components/Header";
 
 const ProtectedRoute = ({ children }: any) => {
   const { isAuthenticated, user }: any = useAuthStore();
@@ -31,18 +33,10 @@ const RedireAuthenticatedUser = ({ children }: any) => {
 };
 
 const App = () => {
-  const navigate = useNavigate();
 
-  const { logout, checkAuth, token }: any = useAuthStore();
+  const { checkAuth, token }: any = useAuthStore();
 
-  const handleLogOut = async () => {
-    try {
-      await logout();
-      navigate("/login");
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  
 
   useEffect(() => {
     checkAuth(token);
@@ -55,9 +49,9 @@ const App = () => {
         element={
           <ProtectedRoute>
             <main>
-              <div>Home</div>
-              <Post />
-              <button onClick={handleLogOut}>Logout</button>
+              {/* <Header/>
+              <Post /> */}
+              <PostRepCmt/>
             </main>
           </ProtectedRoute>
         }
@@ -70,6 +64,14 @@ const App = () => {
           </RedireAuthenticatedUser>
         }
       />
+      {/* <Route
+        path="/rep-cmt"
+        element={
+          <RedireAuthenticatedUser>
+              <PostRepCmt/>
+          </RedireAuthenticatedUser>
+        }
+      /> */}
       <Route
         path="/register"
         element={
