@@ -1,17 +1,34 @@
 import { create } from "zustand";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const API_URL = "http://localhost:3000/api/auth";
+
+const getUser = async () => {
+  const token = Cookies.get("token");
+  if (!token) {
+    return null;
+  }
+
+  try {
+    const response = await axios.post(`${API_URL}/check-auth`, {
+      token,
+    });
+
+    return response.data.user;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const useAuthStore = create((set) => ({
-  user: null,
+  user: getUser(),
   isAuthenticated: false,
-  error: null,
-  isLoading: false,
   isCheckingAuth: true,
+  error: null,
+  token: Cookies.get("token") || null,
 
   signup: async (username: String, email: String, password: String) => {
-    set({ isLoading: true, error: null });
-
     try {
       const response = await axios.post(`${API_URL}/register`, {
         username,
@@ -20,10 +37,12 @@ export const useAuthStore = create((set) => ({
       });
 
       set({ user: response.data.user, isAuthenticated: true });
+
+      Cookies.set("token", response.data.token, { expires: 7 });
+      set({ token: response.data.token });
     } catch (error: any) {
       set({
         error: error.response.data.message || "Error signing up",
-        isLoading: false,
       });
 
       throw error;
@@ -31,19 +50,22 @@ export const useAuthStore = create((set) => ({
   },
 
   login: async (username: String, password: String) => {
-    set({ isLoading: true, error: null });
-
     try {
       const response = await axios.post(`${API_URL}/login`, {
         username,
         password,
       });
 
-      set({ user: response.data.user, isAuthenticated: true });
+      set({
+        user: response.data.user,
+        isAuthenticated: true,
+      });
+
+      Cookies.set("token", response.data.token, { expires: 7 });
+      set({ token: response.data.token });
     } catch (error: any) {
       set({
         error: error.response.data.message || "Error logging in",
-        isLoading: false,
       });
 
       throw error;
@@ -51,16 +73,18 @@ export const useAuthStore = create((set) => ({
   },
 
   logout: async () => {
-    set({ isLoading: true, error: null });
-
+    const token = Cookies.get("token");
     try {
-      await axios.post(`${API_URL}/logout`);
+      await axios.post(`${API_URL}/logout`, {
+        token,
+      });
 
       set({ user: null, isAuthenticated: false });
+
+      Cookies.remove("token");
     } catch (error: any) {
       set({
         error: error.response.data.message || "Error logging out",
-        isLoading: false,
       });
 
       throw error;
@@ -68,8 +92,6 @@ export const useAuthStore = create((set) => ({
   },
 
   verifyEmail: async (code: String) => {
-    set({ isLoading: true, error: null });
-
     try {
       const response = await axios.post(`${API_URL}/verify-email`, { code });
 
@@ -77,26 +99,34 @@ export const useAuthStore = create((set) => ({
     } catch (error: any) {
       set({
         error: error.response.data.message || "Error verifying email",
-        isLoading: false,
       });
 
       throw error;
     }
   },
 
-  checkAuth: async () => {
+  checkAuth: async (token: String) => {
+    if (!token) {
+      set({ isCheckingAuth: false });
+      return;
+    }
     set({ isCheckingAuth: true });
 
     try {
-      const response = await axios.get(`${API_URL}/check-auth`, {
-        withCredentials: true,
+      const response = await axios.post(`${API_URL}/check-auth`, {
+        token,
       });
 
-      set({ user: response.data.user, isAuthenticated: true });
+      set({
+        user: response.data.user,
+        isAuthenticated: true,
+        isCheckingAuth: false,
+      });
     } catch (error: any) {
-      set({ isCheckingAuth: false });
-
-      throw error;
+      set({
+        error: error.response.data.message || "Error checking auth",
+        isCheckingAuth: false,
+      });
     }
   },
 }));
