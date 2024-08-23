@@ -94,11 +94,13 @@ export const DangNhap = () => {
                     </label>
                   </div>
                 </div>
-                <a
-                  href="#"
-                  className="text-sm font-medium text-primary-600 hover:underline "
-                >
-                  Quên mật khẩu?
+                <a href="#"
+                  className="text-sm font-medium text-primary-600 hover:underline ">
+                  <Link
+                    to={"/quen-mat-khau"}
+                    className="text-sm font-medium text-primary-600 hover:underline ">
+                    Quên mật khẩu?
+                  </Link>
                 </a>
               </div>
               <button
