@@ -4,6 +4,7 @@ import { DangKy } from "./components/DangKy";
 import XacThucEmail from "./components/XacThucEmail";
 import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
+import Post from "./components/Post";
 
 const ProtectedRoute = ({ children }: any) => {
   const { isAuthenticated, user }: any = useAuthStore();
@@ -32,13 +33,11 @@ const RedireAuthenticatedUser = ({ children }: any) => {
 const App = () => {
   const navigate = useNavigate();
 
-  const { logout, user, checkAuth, token }: any = useAuthStore();
-
-  // checkAuth();
+  const { logout, checkAuth, token }: any = useAuthStore();
 
   const handleLogOut = async () => {
     try {
-      await logout(user);
+      await logout();
       navigate("/login");
     } catch (error) {
       console.log(error);
@@ -57,6 +56,7 @@ const App = () => {
           <ProtectedRoute>
             <main>
               <div>Home</div>
+              <Post />
               <button onClick={handleLogOut}>Logout</button>
             </main>
           </ProtectedRoute>

@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useEffect } from "react";
 
 const API_URL = "http://localhost:3000/api/auth";
 
@@ -38,6 +37,9 @@ export const useAuthStore = create((set) => ({
       });
 
       set({ user: response.data.user, isAuthenticated: true });
+
+      Cookies.set("token", response.data.token, { expires: 7 });
+      set({ token: response.data.token });
     } catch (error: any) {
       set({
         error: error.response.data.message || "Error signing up",
@@ -59,11 +61,8 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: true,
       });
 
-      const getToken = await axios.post(`${API_URL}/token`, {
-        user: response.data.user,
-      });
-
-      Cookies.set("token", getToken.data.token.token, { expires: 7 });
+      Cookies.set("token", response.data.token, { expires: 7 });
+      set({ token: response.data.token });
     } catch (error: any) {
       set({
         error: error.response.data.message || "Error logging in",
@@ -73,10 +72,11 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  logout: async (user: any) => {
+  logout: async () => {
+    const token = Cookies.get("token");
     try {
       await axios.post(`${API_URL}/logout`, {
-        userId: user._id,
+        token,
       });
 
       set({ user: null, isAuthenticated: false });

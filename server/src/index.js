@@ -2,8 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/user.route.js";
+import postRoutes from "./routes/post.route.js";
 import { connectDB } from "./db/connectDB.js";
-import cookiesParser from "cookie-parser";
 import jwt from "jsonwebtoken";
 
 const PORT = process.env.PORT || 3000;
@@ -13,9 +13,9 @@ dotenv.config();
 
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
-app.use(cookiesParser());
 
 app.use("/api/auth", authRoutes);
+app.use("/api/post", postRoutes);
 
 app.post("/", (req, res) => {
   const token = req.body;

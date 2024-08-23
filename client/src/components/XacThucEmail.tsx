@@ -8,7 +8,7 @@ const XacThucEmail = () => {
   const navigate = useNavigate();
 
   const { verifyEmail }: any = useAuthStore();
-  console.log(code.join(""));
+
   const handleChange = (e: any, index: number) => {
     const value = e.target.value;
     if (isNaN(Number(value))) {
