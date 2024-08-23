@@ -17,6 +17,9 @@ export const DangNhap = () => {
       if (remember) {
         localStorage.setItem("username", username);
         localStorage.setItem("password", password);
+      } else {
+        localStorage.removeItem("username");
+        localStorage.removeItem("password");
       }
     } catch (error) {
       console.log(error);

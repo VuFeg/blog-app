@@ -5,7 +5,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
   const recipient = [{ email }];
 
   try {
-    const response = await client.send({
+    await client.send({
       from: sender,
       to: recipient,
       subject: "Verify your email",
@@ -15,11 +15,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
       ),
       category: "Email Verification",
     });
-
-    console.log("Verification email sent: ", response);
   } catch (error) {
-    console.log("Error sending veritification email: ", error);
-
     throw new Error(`Error sending veritification email: ${error}`);
   }
 };

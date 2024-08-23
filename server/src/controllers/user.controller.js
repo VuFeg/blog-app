@@ -1,9 +1,11 @@
-import bcrypt from "bcrypt";
+import bcrypt, { hashSync } from "bcrypt";
 import User from "../models/user.model.js";
 import { Token } from "../models/token.model.js";
 import { sendVerificationEmail } from "../mailtrap/emails.js";
 import { generateToken } from "../utils/generateToken.js";
 import jwt from "jsonwebtoken";
+
+const salt = bcrypt.genSaltSync(10);
 
 const register = async (req, res) => {
   const { username, email, password } = req.body;
@@ -20,7 +22,6 @@ const register = async (req, res) => {
         .json({ success: false, message: "User already exists" });
     }
 
-    const salt = bcrypt.genSaltSync(10);
     const verificationToken = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
@@ -37,7 +38,7 @@ const register = async (req, res) => {
     await user.save();
 
     const token = generateToken(user._id);
-    const responseToken = await Token.create({
+    await Token.create({
       token,
       userId: user._id,
     });
@@ -51,7 +52,7 @@ const register = async (req, res) => {
         ...user._doc,
         password: undefined,
       },
-      responseToken,
+      token,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -79,7 +80,7 @@ const login = async (req, res) => {
     user.lastLogin = Date.now();
     const token = generateToken(user._id);
 
-    const responseToken = await Token.create({
+    await Token.create({
       token,
       userId: user._id,
     });
@@ -93,7 +94,7 @@ const login = async (req, res) => {
         ...user._doc,
         password: undefined,
       },
-      responseToken,
+      token,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -101,13 +102,11 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-  const { userId } = req.body;
-  const token = await Token.findOneAndDelete(userId);
+  const { token } = req.body;
   if (!token) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Invalid or expired token" });
+    return res.status(400).json({ success: false, message: "Invalid token" });
   }
+  await Token.findOneAndDelete(token);
   res.status(200).json({ success: true, message: "Logout success" });
 };
 
@@ -145,28 +144,32 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-const verifyToken = (token) => {
-  if (!token) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Unauthorized - no token provided" });
-  }
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+const verifyToken = async (token) => {
+  try {
+    const checkToken = await Token.findOne({ token });
 
-  if (!decoded) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Unauthorized - invalid token" });
-  }
+    if (!checkToken) {
+      return;
+    }
 
-  const userId = decoded.userId;
-  return userId;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!decoded) {
+      return;
+    }
+
+    const userId = decoded.userId;
+
+    return userId;
+  } catch (error) {
+    return;
+  }
 };
 
 const checkAuth = async (req, res) => {
   const token = req.body.token;
 
-  const userId = verifyToken(token);
+  const userId = await verifyToken(token);
 
   try {
     const user = await User.findById(userId);
@@ -188,19 +191,4 @@ const checkAuth = async (req, res) => {
   }
 };
 
-const token = async (req, res) => {
-  const { userId } = req.body;
-  try {
-    const token = await Token.findOne(userId);
-    if (!token) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or expired token" });
-    }
-    res.status(200).json({ success: true, token });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-};
-
-export { register, login, logout, verifyEmail, checkAuth, token };
+export { register, login, logout, verifyEmail, checkAuth };
