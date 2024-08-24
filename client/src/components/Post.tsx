@@ -18,7 +18,7 @@ const Post = () => {
       <div className="bg-white w-[570px] rounded-t-3xl border shadow-lg">
         <div className="flex items-center gap-5 p-4 mb-4 border-b">
           <img src={avatar} alt="" className="w-6 h-6 object-cover rounded-full" />
-          <input className="flex-1 " type="text" placeholder="Bắt đầu chat ..."/>
+          <input className="flex-1 outline-none" type="text" placeholder="Bắt đầu chat ..." />
           <button className=" border px-4 py-1 rounded-md">Đăng</button>
         </div>
         <div className="flex flex-1 gap-5 p-4 border-b">
@@ -28,14 +28,24 @@ const Post = () => {
           <div className="flex flex-1 flex-col gap-3">
             <div className="flex flex-1 justify-between">
               <b><h3>wnhu293</h3></b>
-              <p><MdMoreHoriz /></p>
+              <button className="hover:rounded-full p-2  hover:bg-gray-300">
+                <MdMoreHoriz />
+              </button>
             </div>
             <div>Bố mẹ cho anh ăn học. ra đường người ta hỏi ước mơ anh làm gì. Anh nói"Nhàm nhan nhồ"</div>
             <div className="flex gap-8 items-center">
-            <IoMdHeartEmpty />
-            <p className="flex items-center gap-1 "><BiMessageRounded />317</p>
-            <LuSendToBack />
-            <RiSendPlaneFill />
+              <div className="hover:rounded-full p-2  hover:bg-gray-300">
+                <IoMdHeartEmpty />
+              </div>
+              <div className=" flex items-center gap-1 opacity-70 hover:rounded-full p-2  hover:bg-gray-300">
+                <BiMessageRounded />317
+              </div>
+              <div className="hover:rounded-full p-2 opacity-70 hover:bg-gray-300">
+                <LuSendToBack />
+              </div>
+              <div className="hover:rounded-full p-2 opacity-70 hover:bg-gray-300">
+                <RiSendPlaneFill />
+              </div>
             </div>
           </div>
         </div>

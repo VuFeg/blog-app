@@ -49,9 +49,9 @@ const App = () => {
         element={
           <ProtectedRoute>
             <main>
-              {/* <Header/>
-              <Post /> */}
-              <PostRepCmt/>
+              <Header/>
+              <Post />
+              {/* <PostRepCmt/> */}
             </main>
           </ProtectedRoute>
         }
