@@ -7,6 +7,8 @@ import { Header } from "./components/Header";
 import { DangNhap } from "./pages/DangNhap";
 import XacThucEmail from "./pages/XacThucEmail";
 import { useEffect } from "react";
+import { PostRepCmt } from "./components/PostRepCmt";
+import { TimKiem } from "./components/TimKiem";
 
 const App = () => {
   const { user, checkAuth, isVerified }: any = useAuthStore();
@@ -20,6 +22,8 @@ const App = () => {
       <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/post-rep-cmt" element={<PostRepCmt />} />
+        <Route path="/tim-kiem" element={<TimKiem />} />
         <Route
           path="/login"
           element={user ? <Navigate to={"/"} /> : <DangNhap />}
