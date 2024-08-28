@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 
 export const DangNhap = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -13,13 +14,11 @@ export const DangNhap = () => {
     e.preventDefault();
 
     try {
-      await login(username, password);
+      await login({ username, password });
+      navigate("/verify-email");
       if (remember) {
         localStorage.setItem("username", username);
         localStorage.setItem("password", password);
-      } else {
-        localStorage.removeItem("username");
-        localStorage.removeItem("password");
       }
     } catch (error) {
       console.log(error);
@@ -94,11 +93,14 @@ export const DangNhap = () => {
                     </label>
                   </div>
                 </div>
-                <a href="#"
-                  className="text-sm font-medium text-primary-600 hover:underline ">
+                <a
+                  href="#"
+                  className="text-sm font-medium text-primary-600 hover:underline "
+                >
                   <Link
                     to={"/quen-mat-khau"}
-                    className="text-sm font-medium text-primary-600 hover:underline ">
+                    className="text-sm font-medium text-primary-600 hover:underline "
+                  >
                     Quên mật khẩu?
                   </Link>
                 </a>

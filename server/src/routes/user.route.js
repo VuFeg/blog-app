@@ -6,10 +6,11 @@ import {
   verifyEmail,
   checkAuth,
 } from "../controllers/user.controller.js";
+import { protectRoute } from "../../middleware/protectRoute.js";
 
 const router = express.Router();
 
-router.post("/check-auth", checkAuth);
+router.get("/check-auth", protectRoute, checkAuth);
 
 router.post("/register", register);
 router.post("/login", login);

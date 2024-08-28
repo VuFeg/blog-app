@@ -1,6 +1,4 @@
-import { useEffect } from "react";
-import { usePostStore } from "../store/postStore";
-import avatar from "../assets/images/avatar.png"
+import avatar from "../assets/images/avatar.png";
 import { MdMoreHoriz } from "react-icons/md";
 import { BiMessageRounded } from "react-icons/bi";
 import { IoMdHeartEmpty } from "react-icons/io";
@@ -8,11 +6,6 @@ import { LuSendToBack } from "react-icons/lu";
 import { RiSendPlaneFill } from "react-icons/ri";
 
 const Post = () => {
-  const { fetchPosts, posts }: any = usePostStore();
-
-  useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
   return (
     <div className="flex justify-center h-screen ">
       <div className="bg-white w-[570px] rounded-t-3xl border shadow-lg">
@@ -32,7 +25,6 @@ const Post = () => {
                 <MdMoreHoriz />
               </button>
             </div>
-            <div>Bố mẹ cho anh ăn học. ra đường người ta hỏi ước mơ anh làm gì. Anh nói"Nhàm nhan nhồ"</div>
             <div className="flex gap-8 items-center">
               <div className="hover:rounded-full p-2  hover:bg-gray-300">
                 <IoMdHeartEmpty />

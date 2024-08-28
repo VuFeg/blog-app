@@ -1,18 +1,28 @@
-import bcrypt, { hashSync } from "bcrypt";
+import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
-import { Token } from "../models/token.model.js";
 import { sendVerificationEmail } from "../mailtrap/emails.js";
-import { generateToken } from "../utils/generateToken.js";
-import jwt from "jsonwebtoken";
+import { generateTokenAndSetToken } from "../utils/generateTokenAndSetToken.js";
 
-const salt = bcrypt.genSaltSync(10);
-
-const register = async (req, res) => {
-  const { username, email, password } = req.body;
+export const register = async (req, res) => {
+  const { username, email, password, confirmPassword } = req.body;
+  console.log(req.body);
 
   try {
-    if (!username || !email || !password) {
-      throw new Error("Please fill in all fields");
+    if (!username || !email || !password || !confirmPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
+    if (password !== confirmPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Passwords do not match" });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ success: false, message: "Invalid email" });
     }
 
     const userAlreadyExists = await User.findOne({ username });
@@ -22,10 +32,18 @@ const register = async (req, res) => {
         .json({ success: false, message: "User already exists" });
     }
 
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 6 characters",
+      });
+    }
+
     const verificationToken = Math.floor(
       100000 + Math.random() * 900000
     ).toString();
 
+    const salt = bcrypt.genSaltSync(10);
     const user = await User.create({
       username,
       email,
@@ -35,34 +53,35 @@ const register = async (req, res) => {
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000,
     });
 
-    await user.save();
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not created" });
+    }
 
-    const token = generateToken(user._id);
-    await Token.create({
-      token,
-      userId: user._id,
-    });
+    await user.save();
 
     await sendVerificationEmail(user.email, verificationToken);
 
     res.status(200).json({
       success: true,
       message: "User created successfully",
-      user: {
-        ...user._doc,
-        password: undefined,
-      },
-      token,
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    res.status(400).json({ success: false, message: "Internal server error" });
   }
 };
 
-const login = async (req, res) => {
+export const login = async (req, res) => {
   const { username, password } = req.body;
 
   try {
+    if (!username || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
     const user = await User.findOne({ username });
     if (!user) {
       return res
@@ -78,12 +97,7 @@ const login = async (req, res) => {
     }
 
     user.lastLogin = Date.now();
-    const token = generateToken(user._id);
-
-    await Token.create({
-      token,
-      userId: user._id,
-    });
+    generateTokenAndSetToken(user._id, res);
 
     await user.save();
 
@@ -94,23 +108,23 @@ const login = async (req, res) => {
         ...user._doc,
         password: undefined,
       },
-      token,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
 
-const logout = async (req, res) => {
-  const { token } = req.body;
-  if (!token) {
-    return res.status(400).json({ success: false, message: "Invalid token" });
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie("token");
+
+    res.status(200).json({ success: true, message: "Logout success" });
+  } catch (error) {
+    res.status(400).json({ success: false, message: "Internal server error" });
   }
-  await Token.findOneAndDelete(token);
-  res.status(200).json({ success: true, message: "Logout success" });
 };
 
-const verifyEmail = async (req, res) => {
+export const verifyEmail = async (req, res) => {
   const { code } = req.body;
   try {
     const user = await User.findOne({
@@ -131,6 +145,8 @@ const verifyEmail = async (req, res) => {
 
     await user.save();
 
+    generateTokenAndSetToken(user._id, res);
+
     res.status(200).json({
       success: true,
       message: "Email verified successfully",
@@ -144,51 +160,10 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-const verifyToken = async (token) => {
+export const checkAuth = async (req, res) => {
   try {
-    const checkToken = await Token.findOne({ token });
-
-    if (!checkToken) {
-      return;
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    if (!decoded) {
-      return;
-    }
-
-    const userId = decoded.userId;
-
-    return userId;
+    res.status(200).json({ success: true, user: req.user });
   } catch (error) {
-    return;
+    res.status(400).json({ success: false, message: "Internal server error" });
   }
 };
-
-const checkAuth = async (req, res) => {
-  const token = req.body.token;
-
-  const userId = await verifyToken(token);
-
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
-    }
-
-    res.status(200).json({
-      success: true,
-      user: {
-        ...user._doc,
-        password: undefined,
-      },
-    });
-  } catch (error) {
-    res.status(400).json({ success: false, message: "Unauthorized" });
-  }
-};
-
-export { register, login, logout, verifyEmail, checkAuth };

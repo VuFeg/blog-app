@@ -1,132 +1,86 @@
 import { create } from "zustand";
 import axios from "axios";
-import Cookies from "js-cookie";
-
-const API_URL = "http://localhost:3000/api/auth";
-
-const getUser = async () => {
-  const token = Cookies.get("token");
-  if (!token) {
-    return null;
-  }
-
-  try {
-    const response = await axios.post(`${API_URL}/check-auth`, {
-      token,
-    });
-
-    return response.data.user;
-  } catch (error) {
-    console.log(error);
-  }
-};
+import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
-  user: getUser(),
-  isAuthenticated: false,
+  user: null,
+  isSigningUp: false,
+  isLoggingOut: false,
+  isLoggingIn: false,
   isCheckingAuth: true,
-  error: null,
-  token: Cookies.get("token") || null,
+  isVerifyingEmail: false,
+  isVerified: false,
 
-  signup: async (username: String, email: String, password: String) => {
+  signup: async (credentials: object) => {
+    set({ isSigningUp: true });
     try {
-      const response = await axios.post(`${API_URL}/register`, {
-        username,
-        email,
-        password,
-      });
+      const response = await axios.post(`/api/auth/register`, credentials);
 
-      set({ user: response.data.user, isAuthenticated: true });
-
-      Cookies.set("token", response.data.token, { expires: 7 });
-      set({ token: response.data.token });
+      set({ user: response.data.user, isSigningUp: false });
+      toast.success("Account created successfully");
     } catch (error: any) {
-      set({
-        error: error.response.data.message || "Error signing up",
-      });
-
-      throw error;
+      set({ user: null, isSigningUp: false });
+      toast.error(error.response.data.message || "Signup failed");
     }
   },
 
-  login: async (username: String, password: String) => {
+  login: async (credentials: object) => {
+    set({ isLoggingIn: true });
+
     try {
-      const response = await axios.post(`${API_URL}/login`, {
-        username,
-        password,
-      });
+      const response = await axios.post(`/api/auth/login`, credentials);
 
       set({
         user: response.data.user,
-        isAuthenticated: true,
+        isLoggingIn: false,
+        isVerified: response.data.user.isVerified,
       });
-
-      Cookies.set("token", response.data.token, { expires: 7 });
-      set({ token: response.data.token });
+      toast.success("Logged in successfully");
     } catch (error: any) {
-      set({
-        error: error.response.data.message || "Error logging in",
-      });
-
-      throw error;
+      set({ isLoggingIn: false, user: null });
+      toast.error(error.response.data.message || "Login failed");
     }
   },
 
   logout: async () => {
-    const token = Cookies.get("token");
+    set({ isLoggingOut: true });
     try {
-      await axios.post(`${API_URL}/logout`, {
-        token,
-      });
+      await axios.post(`/api/auth/logout`);
 
-      set({ user: null, isAuthenticated: false });
-
-      Cookies.remove("token");
+      set({ user: null, isLoggingOut: false });
+      toast.success("Logged out successfully");
     } catch (error: any) {
-      set({
-        error: error.response.data.message || "Error logging out",
-      });
-
-      throw error;
+      set({ isLoggingOut: false });
+      toast.error(error.response.data.message || "Logout error");
     }
   },
 
   verifyEmail: async (code: String) => {
+    set({ isVerifyingEmail: true });
     try {
-      const response = await axios.post(`${API_URL}/verify-email`, { code });
+      const response = await axios.post(`/api/auth/verify-email`, { code });
 
-      set({ user: response.data.user, isAuthenticated: true });
+      set({ user: response.data.user, isVerifyingEmail: false });
+      toast.success("Verify Email successfully");
     } catch (error: any) {
-      set({
-        error: error.response.data.message || "Error verifying email",
-      });
-
-      throw error;
+      set({ user: null, isVerifyingEmail: false });
+      toast.error(error.response.data.message || "Verify email failed");
     }
   },
 
-  checkAuth: async (token: String) => {
-    if (!token) {
-      set({ isCheckingAuth: false });
-      return;
-    }
+  checkAuth: async () => {
     set({ isCheckingAuth: true });
 
     try {
-      const response = await axios.post(`${API_URL}/check-auth`, {
-        token,
-      });
+      const response = await axios.get(`/api/auth/check-auth`);
 
       set({
         user: response.data.user,
-        isAuthenticated: true,
         isCheckingAuth: false,
+        isVerified: response.data.user.isVerified,
       });
     } catch (error: any) {
-      set({
-        error: error.response.data.message || "Error checking auth",
-        isCheckingAuth: false,
-      });
+      set({ user: null, isCheckingAuth: false });
     }
   },
 }));
