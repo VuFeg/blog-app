@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import { DangKy } from "./pages/DangKy";
 import { useAuthStore } from "./store/authStore";
 import { Header } from "./components/Header";
+  import Profile from "./components/Profile";
 import { DangNhap } from "./pages/DangNhap";
 import XacThucEmail from "./pages/XacThucEmail";
 import { useEffect } from "react";
@@ -36,6 +37,12 @@ const App = () => {
           path="/verify-email"
           element={user ? <Navigate to={"/"} /> : <XacThucEmail />}
         />
+         <Route 
+        path="/profile"
+        element= {
+          <Profile/>
+        }
+      />
       </Routes>
 
       <Toaster />
