@@ -1,13 +1,9 @@
-import React from 'react'
-import { usePostStore } from "../store/postStore";
-import avatar from "../assets/images/avatar.png"
+import avatar from "../assets/images/avatar.png";
 import { MdMoreHoriz } from "react-icons/md";
 import { ImFilePicture } from "react-icons/im";
 import { MdOutlineGifBox } from "react-icons/md";
 import { RxFrame } from "react-icons/rx";
 import { RxFileText } from "react-icons/rx";
-
-
 
 export const PostRepCmt = () => {
     return (
@@ -70,7 +66,8 @@ export const PostRepCmt = () => {
                     </div>
                 </div>
             </div>
-        </div>
-
-    )
-}
+            
+          </div>
+        
+  )
+};

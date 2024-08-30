@@ -5,6 +5,7 @@ import authRoutes from "./routes/user.route.js";
 import postRoutes from "./routes/post.route.js";
 import { connectDB } from "./db/connectDB.js";
 import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 const PORT = process.env.PORT || 3000;
 
@@ -13,6 +14,7 @@ dotenv.config();
 
 app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/post", postRoutes);

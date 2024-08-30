@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 
@@ -37,7 +37,7 @@ const XacThucEmail = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (code.every((digit) => digit !== "")) {
       handleSubmit(new Event("submit"));
     }
@@ -51,10 +51,7 @@ const XacThucEmail = () => {
             <h1 className="text-xl font-bold text-gray-900 md:text-2xl ">
               Xác minh tài khoản của bạn
             </h1>
-            <form
-              className="space-y-4 md:space-y-6"
-              action="#"
-            >
+            <form className="space-y-4 md:space-y-6" action="#">
               <p>Nhập mã gồm 6 chữ số được gửi đến địa chỉ email của bạn.</p>
               <div>
                 <form onSubmit={handleSubmit}>
@@ -62,7 +59,9 @@ const XacThucEmail = () => {
                     {code.map((digit, index) => (
                       <input
                         key={index}
-                        ref={(el) => (inputRefs.current[index] = el as HTMLInputElement)}
+                        ref={(el) =>
+                          (inputRefs.current[index] = el as HTMLInputElement)
+                        }
                         className="w-10 h-10 text-center text-2xl border border-gray-300 rounded-lg focus:ring-primary-600 focus:border-primary-600 block p-2.5"
                         type="text"
                         maxLength={1}
@@ -80,13 +79,11 @@ const XacThucEmail = () => {
               >
                 Xác nhận
               </button>
-              
             </form>
           </div>
         </div>
       </div>
     </section>
-
   );
 };
 

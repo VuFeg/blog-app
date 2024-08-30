@@ -14,13 +14,8 @@ export const DangKy = () => {
 
   const handleSignUp = async (e: any) => {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      console.log("Password and confirm password do not match");
-      return;
-    }
     try {
-      await signup(username, email, password);
+      await signup({ username, email, password, confirmPassword });
       navigate("/verify-email");
     } catch (error) {
       console.log(error);

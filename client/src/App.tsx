@@ -1,101 +1,52 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import { DangNhap } from "./components/DangNhap";
-import { DangKy } from "./components/DangKy";
-import XacThucEmail from "./components/XacThucEmail";
+import { Toaster } from "react-hot-toast";
+import HomePage from "./pages/HomePage";
+import { DangKy } from "./pages/DangKy";
 import { useAuthStore } from "./store/authStore";
-import { useEffect } from "react";
-import Post from "./components/Post";
-import {PostRepCmt} from "./components/PostRepCmt";
 import { Header } from "./components/Header";
-import Profile from "./components/Profile";
-
-const ProtectedRoute = ({ children }: any) => {
-  const { isAuthenticated, user }: any = useAuthStore();
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-
-  if (!user.isVerified) {
-    return <Navigate to="/verify-email" />;
-  }
-
-  return children;
-};
-
-const RedireAuthenticatedUser = ({ children }: any) => {
-  const { isAuthenticated, user }: any = useAuthStore();
-
-  if (isAuthenticated && user?.isVerified) {
-    return <Navigate to="/" />;
-  }
-
-  return children;
-};
+  import Profile from "./components/Profile";
+import { DangNhap } from "./pages/DangNhap";
+import XacThucEmail from "./pages/XacThucEmail";
+import { useEffect } from "react";
+import { PostRepCmt } from "./components/PostRepCmt";
+import { TimKiem } from "./components/TimKiem";
 
 const App = () => {
-
-  const { checkAuth, token }: any = useAuthStore();
-
-  
+  const { user, checkAuth, isVerified }: any = useAuthStore();
+  console.log(isVerified);
 
   useEffect(() => {
-    checkAuth(token);
-  }, [checkAuth]);
-
+    checkAuth();
+  }, []);
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <main>
-              <Header/>
-              <Post />
-              {/* <PostRepCmt/> */}
-            </main>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          <RedireAuthenticatedUser>
-            <DangNhap />
-          </RedireAuthenticatedUser>
-        }
-      />
-      {/* <Route
-        path="/rep-cmt"
-        element={
-          <RedireAuthenticatedUser>
-              <PostRepCmt/>
-          </RedireAuthenticatedUser>
-        }
-      /> */}
-      <Route
-        path="/register"
-        element={
-          <RedireAuthenticatedUser>
-            <DangKy />
-          </RedireAuthenticatedUser>
-        }
-      />
-      <Route
-        path="/verify-email"
-        element={
-          <RedireAuthenticatedUser>
-            <XacThucEmail />
-          </RedireAuthenticatedUser>
-        }
-      />
-      <Route 
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/post-rep-cmt" element={<PostRepCmt />} />
+        <Route path="/tim-kiem" element={<TimKiem />} />
+        <Route
+          path="/login"
+          element={user ? <Navigate to={"/"} /> : <DangNhap />}
+        />
+        <Route
+          path="/register"
+          element={user ? <Navigate to={"/"} /> : <DangKy />}
+        />
+        <Route
+          path="/verify-email"
+          element={user ? <Navigate to={"/"} /> : <XacThucEmail />}
+        />
+         <Route 
         path="/profile"
         element= {
           <Profile/>
         }
       />
-    </Routes>
+      </Routes>
+
+      <Toaster />
+    </>
   );
 };
 
