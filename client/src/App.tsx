@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { DangNhap } from "./components/DangNhap";
 import { DangKy } from "./components/DangKy";
 import XacThucEmail from "./components/XacThucEmail";
@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import Post from "./components/Post";
 import {PostRepCmt} from "./components/PostRepCmt";
 import { Header } from "./components/Header";
+import Profile from "./components/Profile";
 
 const ProtectedRoute = ({ children }: any) => {
   const { isAuthenticated, user }: any = useAuthStore();
@@ -86,6 +87,12 @@ const App = () => {
           <RedireAuthenticatedUser>
             <XacThucEmail />
           </RedireAuthenticatedUser>
+        }
+      />
+      <Route 
+        path="/profile"
+        element= {
+          <Profile/>
         }
       />
     </Routes>
