@@ -30,6 +30,13 @@ export const register = async (req, res) => {
         .json({ success: false, message: "User already exists" });
     }
 
+    const emailAlreadyExists = await User.findOne({ email });
+    if (emailAlreadyExists) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email already exists" });
+    }
+
     if (password.length < 6) {
       return res.status(400).json({
         success: false,
@@ -47,23 +54,22 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    if (newUser) {
-      generateTokenAndSetToken(newUser._id, res);
-      await newUser.save();
-
-      res.status(200).json({
-        success: true,
-        message: "User created successfully",
-        user: {
-          ...newUser._doc,
-          password: undefined,
-        },
-      });
-    } else {
+    if (!newUser)
       return res
         .status(400)
         .json({ success: false, message: "User not created" });
-    }
+
+    generateTokenAndSetToken(newUser._id, res);
+    await newUser.save();
+
+    res.status(200).json({
+      success: true,
+      message: "User created successfully",
+      user: {
+        ...newUser._doc,
+        password: undefined,
+      },
+    });
   } catch (error) {
     res.status(400).json({ success: false, message: "Internal server error" });
   }
