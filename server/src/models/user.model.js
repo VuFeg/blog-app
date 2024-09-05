@@ -4,31 +4,42 @@ const userSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      required: [true, "Username is required"],
+      required: true,
       unique: true,
     },
-    email: {
-      type: String,
-      required: true,
-    },
-    name: {
+    fullName: {
       type: String,
       required: true,
     },
     password: {
       type: String,
       required: true,
-      min: 6,
+      minLength: 6,
     },
-    lastLogin: {
-      type: Date,
-      default: Date.now,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
-    isVerified: {
-      type: Boolean,
-      default: false,
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: [],
+      },
+    ],
+    profileImg: {
+      type: String,
+      default: "",
     },
-    avatar: {
+    coverImg: {
       type: String,
       default: "",
     },
@@ -36,20 +47,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    followers: [
+
+    link: {
+      type: String,
+      default: "",
+    },
+    likedPosts: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: "Post",
+        default: [],
       },
     ],
-    following: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    verificationToken: String,
-    verificationTokenExpiresAt: Date,
   },
   { timestamps: true }
 );
