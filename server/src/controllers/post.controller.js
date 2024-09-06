@@ -62,12 +62,14 @@ export const likeUnlikePost = async (req, res) => {
       await Post.updateOne({ _id: postId }, { $push: { likes: userId } });
       await User.updateOne({ _id: userId }, { $push: { likedPosts: postId } });
 
-      const notification = new Notification({
-        from: userId,
-        to: post.user,
-        type: "like",
-      });
-      await notification.save();
+      if (userId.toString() !== post.user.toString()) {
+        const notification = new Notification({
+          from: userId,
+          to: post.user,
+          type: "like",
+        });
+        await notification.save();
+      }
 
       res
         .status(201)
@@ -154,7 +156,6 @@ export const getAllPosts = async (req, res) => {
 export const getLikedPosts = async (req, res) => {
   try {
     const userId = req.params.id;
-
     const user = await User.findById(userId);
     if (!user)
       return res
