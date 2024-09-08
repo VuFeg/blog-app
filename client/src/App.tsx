@@ -10,6 +10,8 @@ import XacThucEmail from "./pages/XacThucEmail";
 import { useEffect } from "react";
 import { PostRepCmt } from "./components/PostRepCmt";
 import { TimKiem } from "./components/TimKiem";
+import HoatDong from "./components/HoatDong";
+import FixHome from "./components/FixHome";
 
 const App = () => {
   const { user, checkAuth, isVerified }: any = useAuthStore();
@@ -25,6 +27,8 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/post-rep-cmt" element={<PostRepCmt />} />
         <Route path="/tim-kiem" element={<TimKiem />} />
+        <Route path="/hoat-dong" element={<HoatDong />} />
+        <Route path="/profile/fix-home" element={<FixHome />} />
         <Route
           path="/login"
           element={user ? <Navigate to={"/"} /> : <DangNhap />}
@@ -33,10 +37,10 @@ const App = () => {
           path="/register"
           element={user ? <Navigate to={"/"} /> : <DangKy />}
         />
-        <Route
+        {/* <Route
           path="/verify-email"
           element={user ? <Navigate to={"/"} /> : <XacThucEmail />}
-        />
+        /> */}
          <Route 
         path="/profile"
         element= {

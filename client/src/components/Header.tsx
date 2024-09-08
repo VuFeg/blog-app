@@ -1,8 +1,9 @@
-import { GoHomeFill } from "react-icons/go";
-import { FaRegUser } from "react-icons/fa";
+import { GoHome, GoHomeFill } from "react-icons/go";
+import { FaHeart, FaRegUser, FaUser } from "react-icons/fa";
 import { FaSearch } from "react-icons/fa";
 import { FaRegHeart } from "react-icons/fa";
 import { useAuthStore } from "../store/authStore";
+import { Link, NavLink } from "react-router-dom";
 
 export const Header = () => {
   const { logout }: any = useAuthStore();
@@ -76,37 +77,45 @@ export const Header = () => {
           >
             <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
               <li>
-                <a
-                  href="#"
-                  className="block py-2 pr-4 pl-3 text-white rounded bg-neutral-700 lg:bg-transparent lg:text-neutral-700 lg:p-0 "
+                
+                <NavLink
+                  to="/"
+                  className="block p-2 rounded text-neutral-700 hover:rounded-full  hover:bg-gray-300 "
                   aria-current="page"
                 >
-                  <GoHomeFill />
-                </a>
+                  {({isActive}) => (
+                    isActive ? <GoHomeFill /> : <GoHome />
+                  )}
+      
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
+                <NavLink
+                  to="/tim-kiem"
+                  className={({isActive}) => `block p-2 hover:rounded-full  hover:bg-gray-300 text-gray-700 border-b border-gray-100 ${!isActive && 'opacity-50'}`}
                 >
                   <FaSearch />
-                </a>
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
+                <NavLink
+                  to="/hoat-dong"
+                  className="block p-2 text-gray-700 border-b border-gray-100 hover:rounded-full  hover:bg-gray-300 "
                 >
-                  <FaRegHeart />
-                </a>
+                  {({isActive}) => (
+                    isActive ? <FaHeart /> : <FaRegHeart />
+                  )}
+                </NavLink>
               </li>
               <li>
-                <a
-                  href="#"
-                  className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0"
+                <NavLink
+                  to="/profile"
+                  className="block p-2 text-gray-700 border-b border-gray-100 hover:rounded-full  hover:bg-gray-300 "
                 >
-                  <FaRegUser />
-                </a>
+                  {({isActive}) => (
+                  isActive ? <FaUser /> : <FaRegUser />
+                  )}
+                </NavLink>
               </li>
             </ul>
           </div>

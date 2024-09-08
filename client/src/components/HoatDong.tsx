@@ -2,7 +2,7 @@ import avatar from "../assets/images/avatar.png"
 const HoatDong = () => {
     return (
         <div className="flex justify-center h-screen ">
-            <div className="bg-white w-[570px] rounded-t-3xl border shadow-lg">
+            <div className="bg-white w-[770px] rounded-t-3xl border shadow-lg">
                 <div className="flex gap-5 p-5  ">
                     <img src={avatar} alt="" className="w-12 h-12 p-object-cover rounded-full" />
                     <div className=" flex flex-1 border-b pb-3">
