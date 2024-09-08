@@ -8,7 +8,7 @@ import { RiSendPlaneFill } from "react-icons/ri";
 const Post = () => {
   return (
     <div className="flex justify-center h-screen ">
-      <div className="bg-white w-[570px] rounded-t-3xl border shadow-lg">
+      <div className="bg-white w-[770px] rounded-t-3xl border shadow-lg">
         <div className="flex items-center gap-5 p-4 mb-4 border-b">
           <img src={avatar} alt="" className="w-6 h-6 object-cover rounded-full" />
           <input className="flex-1 outline-none" type="text" placeholder="Bắt đầu chat ..." />

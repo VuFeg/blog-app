@@ -4,7 +4,7 @@ import avatar from "../assets/images/avatar.png"
 export const TimKiem = () => {
     return (
         <div className="flex justify-center h-screen ">
-            <div className="bg-white w-[570px] rounded-t-3xl border shadow-lg">
+            <div className="bg-white w-[770px] rounded-t-3xl border shadow-lg">
                 <div className="w-full p-6 rounded-lg">
                     <div className="relative">
                         <button className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
