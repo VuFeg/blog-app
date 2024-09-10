@@ -15,7 +15,6 @@ export const DangNhap = () => {
 
     try {
       await login({ username, password });
-      navigate("/verify-email");
       if (remember) {
         localStorage.setItem("username", username);
         localStorage.setItem("password", password);
