@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useAuthStore } from "../store/authStore";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export const DangKy = () => {
-  const navigate = useNavigate();
-
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +14,6 @@ export const DangKy = () => {
     e.preventDefault();
     try {
       await signup({ username, email, password, confirmPassword });
-      navigate("/verify-email");
     } catch (error) {
       console.log(error);
     }

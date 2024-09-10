@@ -1,24 +1,40 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "http://localhost:3000/api/post";
+interface PostStore {
+  posts: any[];
+  getPosting: boolean;
+  createPosting: boolean;
+  getPosts: () => Promise<void>;
+  createPost: (text: string) => Promise<void>;
+}
 
-export const usePostStore = create((set) => ({
+export const usePostStore = create<PostStore>((set) => ({
   posts: [],
-  error: null,
-  isFetching: false,
-  isCreating: false,
-  isUpdating: false,
-  isDeleting: false,
+  getPosting: false,
+  createPosting: false,
 
-  fetchPosts: async () => {
+  getPosts: async () => {
     try {
-      set({ isFetching: true });
-      const response = await axios.get(`${API_URL}/get-posts`);
+      set({ getPosting: true });
+      const response = await axios.get("/api/posts/all");
 
-      set({ posts: response.data.posts, isFetching: false });
+      console.log(response.data.posts);
+
+      set({ posts: response.data.posts, getPosting: false });
     } catch (error) {
-      set({ error: "Error fetching posts", isFetching: false });
+      set({ getPosting: false, posts: [] });
+    }
+  },
+  createPost: async (text: string) => {
+    try {
+      set({ createPosting: true });
+      const response = await axios.post("/api/posts/create", { text });
+
+      set((state) => ({ posts: [response.data.post, ...state.posts] }));
+      set({ createPosting: false });
+    } catch (error) {
+      set({ createPosting: false });
     }
   },
 }));
