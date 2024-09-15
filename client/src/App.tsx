@@ -1,18 +1,18 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import HomePage from "./pages/home/HomePage";
-import { DangKy } from "./pages/DangKy";
 import { useAuthStore } from "./store/authStore";
 import { Header } from "./components/Header";
-import Profile from "./components/Profile";
-import { DangNhap } from "./pages/DangNhap";
+import { Profilepage } from "./pages/profile/ProfilePage";
 import { useEffect } from "react";
 import { PostRepCmt } from "./components/PostRepCmt";
-import { TimKiem } from "./components/TimKiem";
-import HoatDong from "./components/HoatDong";
 import FixHome from "./components/FixHome";
 import { usePostStore } from "./store/postStore";
 import { CircularProgress } from "@mui/material";
+import { SearchPage } from "./pages/search/SearchPage";
+import { SuggestPage } from "./pages/suggest/SuggestPage";
+import { LoginPage } from "./pages/login/LoginPage";
+import { RegisterPage } from "./pages/register/RegisterPage";
 
 const App = () => {
   const { user, checkAuth }: any = useAuthStore();
@@ -46,7 +46,7 @@ const App = () => {
           element={
             user ? (
               <Header>
-                <TimKiem />
+                <SearchPage />
               </Header>
             ) : (
               <Navigate to={"/login"} />
@@ -58,7 +58,7 @@ const App = () => {
           element={
             user ? (
               <Header>
-                <HoatDong />
+                <SuggestPage />
               </Header>
             ) : (
               <Navigate to={"/login"} />
@@ -68,18 +68,18 @@ const App = () => {
         <Route path="/profile/fix-home" element={<FixHome />} />
         <Route
           path="/login"
-          element={user ? <Navigate to={"/"} /> : <DangNhap />}
+          element={user ? <Navigate to={"/"} /> : <LoginPage />}
         />
         <Route
           path="/register"
-          element={user ? <Navigate to={"/"} /> : <DangKy />}
+          element={user ? <Navigate to={"/"} /> : <RegisterPage />}
         />
         <Route
           path="/profile"
           element={
             user ? (
               <Header>
-                <Profile />
+                <Profilepage />
               </Header>
             ) : (
               <Navigate to={"/login"} />

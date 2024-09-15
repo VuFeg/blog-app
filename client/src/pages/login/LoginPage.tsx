@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthStore } from "../store/authStore";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
 
-export const DangNhap = () => {
-  const navigate = useNavigate();
+export const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
