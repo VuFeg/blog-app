@@ -1,7 +1,6 @@
-import React from "react";
-import avatar from "../assets/images/avatar.png";
+import avatar from "../../assets/images/avatar.png";
 
-export const TimKiem = () => {
+export const SearchPage = () => {
   return (
     <div className="flex justify-center h-screen ">
       <div className="bg-white w-[770px] rounded-t-3xl border shadow-lg">
