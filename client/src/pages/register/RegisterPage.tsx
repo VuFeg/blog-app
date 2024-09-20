@@ -1,22 +1,21 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 
 export const RegisterPage = () => {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const { signup }: any = useAuthStore();
+  const { signup } = useAuthStore();
 
-  const handleSignUp = async (e: any) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await signup({ username, email, password, confirmPassword });
-    } catch (error) {
-      console.log(error);
-    }
+    await signup({ username, email, password, confirmPassword });
+    navigate("/login");
   };
 
   return (

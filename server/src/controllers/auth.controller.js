@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt";
 import User from "../models/user.model.js";
-import { generateTokenAndSetToken } from "../utils/generateTokenAndSetToken.js";
+import { generateAccessTokenAndSetCookie } from "../utils/generateAccessTokenAndSetCookie.js";
+import { generateRefreshTokenAndSetCookie } from "../utils/generateRefreshTokenAndSetCookie.js";
+import { StatusCodes } from "http-status-codes";
+import { envConfig } from "../utils/config.js";
+import { verifyToken } from "../utils/verifyToken.js";
 
 export const register = async (req, res) => {
   const { username, email, password, confirmPassword } = req.body;
@@ -59,16 +63,12 @@ export const register = async (req, res) => {
         .status(400)
         .json({ success: false, message: "User not created" });
 
-    generateTokenAndSetToken(newUser._id, res);
+    // generateTokenAndSetToken(newUser._id, res);
     await newUser.save();
 
     res.status(200).json({
       success: true,
       message: "User created successfully",
-      user: {
-        ...newUser._doc,
-        password: undefined,
-      },
     });
   } catch (error) {
     res.status(400).json({ success: false, message: "Internal server error" });
@@ -102,15 +102,12 @@ export const login = async (req, res) => {
         .json({ success: false, message: "Invalid credentials" });
     }
 
-    generateTokenAndSetToken(user._id, res);
+    const accessToken = await generateAccessTokenAndSetCookie(user._id, res);
 
     res.status(200).json({
       success: true,
       message: "Login success",
-      user: {
-        ...user._doc,
-        password: undefined,
-      },
+      accessToken,
     });
   } catch (error) {
     res.status(400).json({ success: false, message: error.message });
@@ -119,7 +116,7 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   try {
-    res.clearCookie("token");
+    res.clearCookie("accessToken");
 
     res.status(200).json({ success: true, message: "Logout success" });
   } catch (error) {
@@ -129,9 +126,41 @@ export const logout = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select("-password");
-    res.status(200).json({ success: true, user });
+    res.status(200).json({ success: true, user: req.user });
   } catch (error) {
     res.status(400).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const refreshToken = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: false, message: "No token" });
+    }
+
+    const refreshTokenDecoded = await verifyToken(
+      refreshToken,
+      envConfig.refreshTokenSecret
+    );
+
+    if (!refreshTokenDecoded) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ success: false, message: "Invalid token" });
+    }
+
+    const userId = refreshTokenDecoded.userId;
+
+    const accessToken = await generateAccessTokenAndSetCookie(userId, res);
+
+    res.status(StatusCodes.OK).json({ success: true, accessToken });
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ success: false, message: "Internal server error" });
   }
 };

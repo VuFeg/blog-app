@@ -1,4 +1,3 @@
-import { FaArrowRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 export const QuenMatKhau = () => {
@@ -35,7 +34,7 @@ export const QuenMatKhau = () => {
                 </button>
               </div>
               <div className="flex items-center gap-2">
-                <FaArrowRight className="w-3" />
+                {/* <FaArrowRight className="w-3" /> */}
                 <p className=" font-light ">
                   Quay lại{" "}
                   <Link

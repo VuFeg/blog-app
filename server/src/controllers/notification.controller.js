@@ -2,7 +2,7 @@ import Notification from "../models/notification.model.js";
 
 export const getNotifications = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.userId;
     const notifications = await Notification.find({ to: userId })
       .sort({ createdAt: -1 })
       .populate({ path: "from", select: "username profileImg" });
@@ -18,7 +18,7 @@ export const getNotifications = async (req, res) => {
 
 export const deleteNotifications = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.userId;
 
     await Notification.deleteMany({ to: userId });
 
@@ -32,7 +32,7 @@ export const deleteNotifications = async (req, res) => {
 export const deleteNotification = async (req, res) => {
   try {
     const notificationId = req.params.id;
-    const userId = req.user._id;
+    const userId = req.userId;
 
     const notification = await Notification.findById(notificationId);
     if (!notification) {
@@ -42,12 +42,10 @@ export const deleteNotification = async (req, res) => {
     }
 
     if (notification.to.toString() !== userId.toString()) {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "You are not authorized to delete this notification",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this notification",
+      });
     }
 
     await Notification.findByIdAndDelete(notificationId);

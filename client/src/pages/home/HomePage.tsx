@@ -5,12 +5,18 @@ import { usePostStore } from "../../store/postStore";
 import { useEffect } from "react";
 
 const HomePage = () => {
-  const { user }: any = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const { getPosts } = usePostStore();
+
   useEffect(() => {
-    getPosts();
+    const fetchPosts = async () => {
+      await getPosts();
+    };
+
+    fetchPosts();
   }, []);
-  return <>{user ? <HomeScreen /> : <Navigate to={"/login"} />}</>;
+
+  return <>{isAuthenticated ? <HomeScreen /> : <Navigate to={"/login"} />}</>;
 };
 
 export default HomePage;

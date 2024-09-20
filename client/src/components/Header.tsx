@@ -1,23 +1,27 @@
-import { GoHome, GoHomeFill } from "react-icons/go";
-import { FaHeart, FaRegUser, FaUser } from "react-icons/fa";
-import { GoSearch } from "react-icons/go";
-import { FaRegHeart, FaSearch } from "react-icons/fa";
 import { useAuthStore } from "../store/authStore";
 import { NavLink } from "react-router-dom";
+import {
+  HeartIcon,
+  HomeIcon,
+  MagnifyingGlassIcon,
+  UserIcon,
+} from "@heroicons/react/24/outline";
+import {
+  HomeIcon as HomeIconSolid,
+  HeartIcon as HeartIconSolid,
+  MagnifyingGlassIcon as MagnifyingGlassIconSolid,
+  UserIcon as UserIconSolid,
+} from "@heroicons/react/24/solid";
 
 interface HeaderProps {
   children: React.ReactNode;
 }
 
 export const Header = ({ children }: HeaderProps) => {
-  const { logout }: any = useAuthStore();
+  const { logout, user } = useAuthStore();
 
   const handleLogOut = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.log(error);
-    }
+    await logout();
   };
 
   return (
@@ -48,10 +52,10 @@ export const Header = ({ children }: HeaderProps) => {
                   className="block py-2 px-4 rounded-xl hover:bg-gray-300 text-gray-700 hover:-translate-y-1 transform transition"
                 >
                   {({ isActive }) =>
-                    isActive ? (
-                      <GoHomeFill className="size-6" />
+                    !isActive ? (
+                      <HomeIcon className="size-6" />
                     ) : (
-                      <GoHome className="size-6" />
+                      <HomeIconSolid className="size-6" />
                     )
                   }
                 </NavLink>
@@ -62,10 +66,10 @@ export const Header = ({ children }: HeaderProps) => {
                   className="block py-2 px-4 rounded-xl hover:bg-gray-300 text-gray-700 hover:-translate-y-1 transform transition"
                 >
                   {({ isActive }) =>
-                    isActive ? (
-                      <FaSearch className="size-6" />
+                    !isActive ? (
+                      <MagnifyingGlassIcon className="size-6" />
                     ) : (
-                      <GoSearch className="size-6" />
+                      <MagnifyingGlassIconSolid className="size-6" />
                     )
                   }
                 </NavLink>
@@ -76,24 +80,24 @@ export const Header = ({ children }: HeaderProps) => {
                   className="block py-2 px-4 rounded-xl hover:bg-gray-300 text-gray-700 hover:-translate-y-1 transform transition"
                 >
                   {({ isActive }) =>
-                    isActive ? (
-                      <FaHeart className="size-6" />
+                    !isActive ? (
+                      <HeartIcon className="size-6" />
                     ) : (
-                      <FaRegHeart className="size-6" />
+                      <HeartIconSolid className="size-6" />
                     )
                   }
                 </NavLink>
               </li>
               <li>
                 <NavLink
-                  to="/profile"
+                  to={`/profile/${user?.username}`}
                   className="block py-2 px-4 rounded-xl hover:bg-gray-300 text-gray-700 hover:-translate-y-1 transform transition"
                 >
                   {({ isActive }) =>
-                    isActive ? (
-                      <FaUser className="size-6" />
+                    !isActive ? (
+                      <UserIcon className="size-6" />
                     ) : (
-                      <FaRegUser className="size-6" />
+                      <UserIconSolid className="size-6" />
                     )
                   }
                 </NavLink>
