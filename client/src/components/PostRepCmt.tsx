@@ -1,9 +1,4 @@
 import avatar from "../assets/images/avatar.png";
-import { MdMoreHoriz } from "react-icons/md";
-import { ImFilePicture } from "react-icons/im";
-import { MdOutlineGifBox } from "react-icons/md";
-import { RxFrame } from "react-icons/rx";
-import { RxFileText } from "react-icons/rx";
 
 export const PostRepCmt = () => {
   return (
@@ -24,7 +19,7 @@ export const PostRepCmt = () => {
                   <span className=" ml-3 opacity-15 font-normal">18 giờ</span>
                 </div>
                 <button className="hover:rounded-full p-2 hover:bg-gray-300 ...">
-                  <MdMoreHoriz />
+                  {/* <MdMoreHoriz /> */}
                 </button>
               </div>
               <div>
@@ -43,7 +38,7 @@ export const PostRepCmt = () => {
                 <p>
                   {" "}
                   <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                    <MdMoreHoriz />
+                    {/* <MdMoreHoriz /> */}
                   </button>
                 </p>
               </div>
@@ -56,16 +51,16 @@ export const PostRepCmt = () => {
               </div>
               <div className="flex gap-8 items-center opacity-30 ">
                 <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                  <ImFilePicture />
+                  {/* <ImFilePicture /> */}
                 </button>
                 <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                  <MdOutlineGifBox />
+                  {/* <MdOutlineGifBox /> */}
                 </button>
                 <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                  <RxFrame />
+                  {/* <RxFrame /> */}
                 </button>
                 <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                  <RxFileText />
+                  {/* <RxFileText /> */}
                 </button>
               </div>
             </div>

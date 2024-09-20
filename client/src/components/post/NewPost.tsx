@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import avatar from "../../assets/images/avatar.png";
-import { PiImagesSquareLight } from "react-icons/pi";
-import { BsFiletypeGif } from "react-icons/bs";
-import { GoHash } from "react-icons/go";
-import { CgMenuLeft } from "react-icons/cg";
 import Avatar from "@mui/material/Avatar";
-import { useAuthStore } from "../../store/authStore";
 import { usePostStore } from "../../store/postStore";
+import {
+  Bars3CenterLeftIcon,
+  GifIcon,
+  HashtagIcon,
+  PhotoIcon,
+} from "@heroicons/react/24/outline";
+import { useAuthStore } from "../../store/authStore";
 
 export const NewPost = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -14,7 +16,7 @@ export const NewPost = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
 
-  const { user }: any = useAuthStore();
+  const { user } = useAuthStore();
   const { createPost } = usePostStore();
 
   const handleCreatePost = async () => {
@@ -29,6 +31,20 @@ export const NewPost = () => {
         textAreaRef.current.scrollHeight + "px";
     }
   }, [value]);
+
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setFile(file);
+    }
+  };
+
+  const handleFileUploadClick = () => {
+    document.getElementById("fileInput")?.click();
+  };
 
   return (
     <>
@@ -83,11 +99,26 @@ export const NewPost = () => {
                       onChange={(e) => setValue(e.target.value)}
                       ref={textAreaRef}
                     ></textarea>
+                    {file && (
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="preview"
+                        className="w-full h-64 object-cover object-center rounded-lg"
+                      />
+                    )}
                     <div className="flex items-center gap-4">
-                      <PiImagesSquareLight className="size-6 cursor-pointer" />
-                      <BsFiletypeGif className="size-6 cursor-pointer" />
-                      <GoHash className="size-6 cursor-pointer" />
-                      <CgMenuLeft className="size-6 cursor-pointer" />
+                      <div onClick={handleFileUploadClick}>
+                        <input
+                          type="file"
+                          id="fileInput"
+                          className="hidden"
+                          onChange={handleFileChange}
+                        />
+                        <PhotoIcon className="size-6 cursor-pointer" />
+                      </div>
+                      <GifIcon className="size-6 cursor-pointer" />
+                      <HashtagIcon className="size-6 cursor-pointer" />
+                      <Bars3CenterLeftIcon className="size-6 cursor-pointer" />
                     </div>
                   </div>
                 </div>

@@ -1,10 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import HomePage from "./pages/home/HomePage";
-import { useAuthStore } from "./store/authStore";
 import { Header } from "./components/Header";
 import { Profilepage } from "./pages/profile/ProfilePage";
-import { useEffect } from "react";
 import { PostRepCmt } from "./components/PostRepCmt";
 import FixHome from "./components/FixHome";
 import { usePostStore } from "./store/postStore";
@@ -13,14 +11,12 @@ import { SearchPage } from "./pages/search/SearchPage";
 import { SuggestPage } from "./pages/suggest/SuggestPage";
 import { LoginPage } from "./pages/login/LoginPage";
 import { RegisterPage } from "./pages/register/RegisterPage";
+import { PrivateLayout } from "./layouts/PrivateLayout";
+import { useAuthStore } from "./store/authStore";
 
 const App = () => {
-  const { user, checkAuth }: any = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const { createPosting } = usePostStore();
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
 
   if (createPosting)
     return (
@@ -35,55 +31,51 @@ const App = () => {
         <Route
           path="/"
           element={
-            <Header>
-              <HomePage />
-            </Header>
+            <PrivateLayout>
+              <Header>
+                <HomePage />
+              </Header>
+            </PrivateLayout>
           }
         />
         <Route path="/post-rep-cmt" element={<PostRepCmt />} />
         <Route
           path="/tim-kiem"
           element={
-            user ? (
+            <PrivateLayout>
               <Header>
                 <SearchPage />
               </Header>
-            ) : (
-              <Navigate to={"/login"} />
-            )
+            </PrivateLayout>
           }
         />
         <Route
           path="/hoat-dong"
           element={
-            user ? (
+            <PrivateLayout>
               <Header>
                 <SuggestPage />
               </Header>
-            ) : (
-              <Navigate to={"/login"} />
-            )
+            </PrivateLayout>
           }
         />
         <Route path="/profile/fix-home" element={<FixHome />} />
         <Route
           path="/login"
-          element={user ? <Navigate to={"/"} /> : <LoginPage />}
+          element={isAuthenticated ? <Navigate to={"/"} /> : <LoginPage />}
         />
         <Route
           path="/register"
-          element={user ? <Navigate to={"/"} /> : <RegisterPage />}
+          element={isAuthenticated ? <Navigate to={"/"} /> : <RegisterPage />}
         />
         <Route
-          path="/profile"
+          path="/profile/:username"
           element={
-            user ? (
+            <PrivateLayout>
               <Header>
                 <Profilepage />
               </Header>
-            ) : (
-              <Navigate to={"/login"} />
-            )
+            </PrivateLayout>
           }
         />
       </Routes>

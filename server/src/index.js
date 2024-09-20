@@ -10,8 +10,9 @@ import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import postRoutes from "./routes/post.route.js";
 import notificationRoutes from "./routes/notification.route.js";
+import { envConfig } from "./utils/config.js";
 
-const PORT = process.env.PORT || 3000;
+const PORT = envConfig.port;
 
 const app = express();
 dotenv.config();
@@ -22,7 +23,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-app.use(cors({ origin: "*", credentials: true }));
+app.use(cors({ credentials: true, origin: "*" }));
 app.use(express.json()); // to parse req.body
 app.use(express.urlencoded({ extended: true })); // to parse form data (urlencoded)
 app.use(cookieParser());

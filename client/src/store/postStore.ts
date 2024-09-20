@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { API_ROOT } from "../utils/constant";
 
 interface PostStore {
   posts: any[];
@@ -7,6 +8,7 @@ interface PostStore {
   createPosting: boolean;
   getPosts: () => Promise<void>;
   createPost: (text: string) => Promise<void>;
+  getProfile: (username: string) => Promise<void>;
 }
 
 export const usePostStore = create<PostStore>((set) => ({
@@ -17,9 +19,7 @@ export const usePostStore = create<PostStore>((set) => ({
   getPosts: async () => {
     try {
       set({ getPosting: true });
-      const response = await axios.get("/api/posts/all");
-
-      console.log(response.data.posts);
+      const response = await axios.get(`/api/posts/all`);
 
       set({ posts: response.data.posts, getPosting: false });
     } catch (error) {
@@ -36,5 +36,13 @@ export const usePostStore = create<PostStore>((set) => ({
     } catch (error) {
       set({ createPosting: false });
     }
+  },
+  getProfile: async (username: string) => {
+    try {
+      const response = await axios.get(`/api/posts/user/${username}`);
+      console.log(response.data);
+
+      set({ posts: response.data.posts });
+    } catch (error) {}
   },
 }));

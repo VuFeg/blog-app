@@ -6,13 +6,13 @@ import { v2 as cloudinary } from "cloudinary";
 export const getUserProfile = async (req, res) => {
   const { username } = req.params;
   try {
-    const user = await User.findOne({ username }).select("-password");
-    if (!user) {
+    const userProfile = await User.findOne({ username }).select("-password");
+    if (!userProfile) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
     }
-    res.status(200).json({ success: true, user });
+    res.status(200).json({ success: true, userProfile });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
@@ -20,7 +20,7 @@ export const getUserProfile = async (req, res) => {
 
 export const followUnfollowUser = async (req, res) => {
   const { id } = req.params;
-  const userId = req.user._id;
+  const userId = req.userId;
 
   try {
     const userToModify = await User.findById(id);
@@ -77,7 +77,7 @@ export const followUnfollowUser = async (req, res) => {
 
 export const getSuggestedUsers = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.userId;
 
     const usersFollowedByMe = await User.findById(userId).select("following");
 

@@ -8,7 +8,6 @@ import {
 } from "../controllers/user.controller.js";
 
 const route = express.Router();
-
 route.get("/profile/:username", protectRoute, getUserProfile);
 route.get("/suggested", protectRoute, getSuggestedUsers);
 route.post("/follow/:id", protectRoute, followUnfollowUser);

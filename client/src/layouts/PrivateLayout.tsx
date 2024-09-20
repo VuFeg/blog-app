@@ -1,14 +1,20 @@
 import { useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
+import { useNavigate } from "react-router-dom";
 
 interface PrivateLayoutProps {
   children: React.ReactNode;
 }
 
 export const PrivateLayout = ({ children }: PrivateLayoutProps) => {
-  const { checkAuth }: any = useAuthStore();
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
+
   useEffect(() => {
-    checkAuth();
-  }, []);
+    if (!isAuthenticated) {
+      navigate("/login");
+    }
+  }, [isAuthenticated]);
+
   return <>{children}</>;
 };

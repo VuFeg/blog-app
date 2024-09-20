@@ -7,19 +7,15 @@ export const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
 
-  const { login }: any = useAuthStore();
+  const { login } = useAuthStore();
 
   const handleLogIn = async (e: any) => {
     e.preventDefault();
 
-    try {
-      await login({ username, password });
-      if (remember) {
-        localStorage.setItem("username", username);
-        localStorage.setItem("password", password);
-      }
-    } catch (error) {
-      console.log(error);
+    await login({ username, password });
+    if (remember) {
+      localStorage.setItem("username", username);
+      localStorage.setItem("password", password);
     }
   };
 
@@ -43,8 +39,8 @@ export const LoginPage = () => {
             </h1>
             <form
               className="space-y-4 md:space-y-6"
-              action="#"
               onSubmit={handleLogIn}
+              noValidate
             >
               <div>
                 <label className="block mb-2 text-sm font-medium ">

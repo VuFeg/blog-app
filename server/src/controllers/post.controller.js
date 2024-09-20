@@ -1,12 +1,13 @@
-import { v2 as cloudinary } from "cloudinary";
 import User from "../models/user.model.js";
 import Post from "../models/post.model.js";
 import Notification from "../models/notification.model.js";
+import { v2 as cloudinary } from "cloudinary";
 
 export const createPost = async (req, res) => {
   try {
     const { text } = req.body;
     let { img } = req.body;
+
     const userId = req.user._id.toString();
 
     const user = await User.findById(userId);
@@ -41,7 +42,7 @@ export const createPost = async (req, res) => {
 
 export const likeUnlikePost = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.userId;
     const { id: postId } = req.params;
 
     const post = await Post.findById(postId);
@@ -84,7 +85,7 @@ export const likeUnlikePost = async (req, res) => {
 export const commentOnPost = async (req, res) => {
   try {
     const { text } = req.body;
-    const userId = req.user._id;
+    const userId = req.userId;
     const postId = req.params.id;
 
     if (!text)
@@ -175,7 +176,7 @@ export const getLikedPosts = async (req, res) => {
 
 export const getFollowingPosts = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.userId;
 
     const user = await User.findById(userId);
     if (!user)
