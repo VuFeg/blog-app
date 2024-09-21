@@ -1,5 +1,6 @@
 import avatar from "../assets/images/avatar.png";
-
+import { HeartIcon } from 'lucide-react';
+import { ArrowPathRoundedSquareIcon, ChatBubbleLeftIcon, EllipsisHorizontalIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
 export const PostRepCmt = () => {
   return (
     <div className="h-screen flex flex-col justify-center items-center ">
@@ -19,7 +20,7 @@ export const PostRepCmt = () => {
                   <span className=" ml-3 opacity-15 font-normal">18 giờ</span>
                 </div>
                 <button className="hover:rounded-full p-2 hover:bg-gray-300 ...">
-                  {/* <MdMoreHoriz /> */}
+                <EllipsisHorizontalIcon className="size-5" />
                 </button>
               </div>
               <div>
@@ -38,7 +39,7 @@ export const PostRepCmt = () => {
                 <p>
                   {" "}
                   <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                    {/* <MdMoreHoriz /> */}
+                  <EllipsisHorizontalIcon className="size-5" />
                   </button>
                 </p>
               </div>
@@ -49,20 +50,20 @@ export const PostRepCmt = () => {
                   placeholder="Trả lời wnhu..."
                 />
               </div>
-              <div className="flex gap-8 items-center opacity-30 ">
-                <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                  {/* <ImFilePicture /> */}
-                </button>
-                <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                  {/* <MdOutlineGifBox /> */}
-                </button>
-                <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                  {/* <RxFrame /> */}
-                </button>
-                <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                  {/* <RxFileText /> */}
-                </button>
-              </div>
+              <div className="flex gap-4 mt-2">
+                  <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
+                    <HeartIcon className="size-5" />
+                  </button>
+                  <button className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50">
+                    <ChatBubbleLeftIcon className="size-5" />
+                  </button>
+                  <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
+                    <ArrowPathRoundedSquareIcon className="size-5" />
+                  </button>
+                  <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
+                    <PaperAirplaneIcon className="size-5" />
+                  </button>
+                </div>
             </div>
           </div>
           <div className="flex items-center gap-5 p-4 mb-4 border-b cursor-pointer justify-between">
