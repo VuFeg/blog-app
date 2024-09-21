@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import { envConfig } from "../utils/config.js";
+import {verifyToken} from "../utils/verifyToken.js"
 
 export const protectRoute = async (req, res, next) => {
   try {
@@ -11,22 +12,9 @@ export const protectRoute = async (req, res, next) => {
         .json({ success: false, message: "Unauthorized - No Token Provided" });
     }
 
-    const decode = jwt.verify(token, envConfig.accessTokenSecret);
+    const decode = await verifyToken(accessToken, envConfig.accessTokenSecret);
 
-    if (!decode) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Unauthorized - Invalid Token" });
-    }
-
-    const user = await User.findById(decode.userId).select("-password");
-    if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Unauthorized - User Not Found" });
-    }
-
-    req.user = user;
+    req.user = decode.userId;
     next();
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });

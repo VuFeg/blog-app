@@ -13,6 +13,7 @@ import { LoginPage } from "./pages/login/LoginPage";
 import { RegisterPage } from "./pages/register/RegisterPage";
 import { PrivateLayout } from "./layouts/PrivateLayout";
 import { useAuthStore } from "./store/authStore";
+import { CommentPage } from "./pages/comment/CommentPage";
 
 const App = () => {
   const { isAuthenticated } = useAuthStore();
@@ -39,6 +40,7 @@ const App = () => {
           }
         />
         <Route path="/post-rep-cmt" element={<PostRepCmt />} />
+        <Route path="/post-cmt" element={<CommentPage />} />
         <Route
           path="/tim-kiem"
           element={
