@@ -114,7 +114,6 @@ export const accessTokenValidator = validate(
         trim: true,
         custom: {
           options: async (value, { req }) => {
-            console.log('access token: ', value)
             const accessToken = (value || '').split(' ')[1]
             if (!accessToken) {
               throw new ErrorWithStatus({
