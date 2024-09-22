@@ -77,6 +77,20 @@ class UserServices {
 
     return user
   }
+  async getFollowers(user_id: string) {
+    const user_followers = await database.followers.find({ followed_user_id: new ObjectId(user_id) }).toArray()
+    const followers = await database.users.find({ _id: { $in: user_followers.map((item) => item.user_id) } }).toArray()
+
+    return followers
+  }
+  async getFollowings(user_id: string) {
+    const user_followings = await database.followers.find({ user_id: new ObjectId(user_id) }).toArray()
+    const followings = await database.users
+      .find({ _id: { $in: user_followings.map((item) => item.followed_user_id) } })
+      .toArray()
+
+    return followings
+  }
 }
 
 const userServices = new UserServices()
