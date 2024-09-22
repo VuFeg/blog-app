@@ -9,9 +9,11 @@ import { UserProfileParams } from '~/models/requests/user.request'
 export const getMeController = async (req: Request, res: Response, next: NextFunction) => {
   const user_id = req.decoded_authorization?.user_id as string
   const result = await userServices.getMe(user_id)
+  const followers = await userServices.getFollowers(user_id)
+  const followings = await userServices.getFollowings(user_id)
   return res.status(HTTP_STATUS_CODE.OK).json({
     message: USER_MESSAGES.GET_ME_SUCCESSFULLY,
-    result
+    result: { ...result, followers, followings }
   })
 }
 
@@ -27,10 +29,12 @@ export const getSuggestsController = async (req: Request, res: Response, next: N
 }
 
 export const getUserProfileController = async (req: Request<UserProfileParams>, res: Response) => {
-  const username = req.params.username
+  const { username } = req.params
   const result = await userServices.getUserProfile(username)
+  const followers = await userServices.getFollowers(username)
+  const followings = await userServices.getFollowings(username)
 
-  return res.status(HTTP_STATUS_CODE.OK).json(result)
+  return res.status(HTTP_STATUS_CODE.OK).json({ result: { ...result, followers, followings } })
 }
 
 export const followController = async (
