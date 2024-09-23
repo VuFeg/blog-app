@@ -27,5 +27,11 @@ export const getNewFeedsController = async (
   const limit = Number(req.query.limit)
   const result = await postServices.getNewFeeds(user_id, page, limit)
 
-  return res.status(HTTP_STATUS_CODE.OK).json({ message: POST_MESSAGES.GET_NEW_FEEDS_SUCCESSFULLY, result })
+  return res.status(HTTP_STATUS_CODE.OK).json({
+    message: POST_MESSAGES.GET_NEW_FEEDS_SUCCESSFULLY,
+    result: result.posts,
+    limit,
+    page,
+    totalPage: Math.ceil(result.total / limit)
+  })
 }
