@@ -8,7 +8,7 @@ import {
   HashtagIcon,
   PhotoIcon,
 } from "@heroicons/react/24/outline";
-import { useAuthStore } from "../../store/authStore";
+import { useUsersStore } from "../../store/usersStore";
 
 export const NewPost = () => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
@@ -16,11 +16,19 @@ export const NewPost = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [value, setValue] = useState("");
 
-  const { user } = useAuthStore();
+  const { user } = useUsersStore();
   const { createPost } = usePostStore();
 
   const handleCreatePost = async () => {
-    await createPost(value);
+    await createPost({
+      captions: value,
+      medias: [
+        {
+          url: "asdasd",
+          type: 0,
+        },
+      ],
+    });
     setIsOpen(!isOpen);
   };
 

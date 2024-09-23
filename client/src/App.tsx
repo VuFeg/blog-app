@@ -17,9 +17,9 @@ import { CommentPage } from "./pages/comment/CommentPage";
 
 const App = () => {
   const { isAuthenticated } = useAuthStore();
-  const { createPosting } = usePostStore();
+  const { isCreatingPost } = usePostStore();
 
-  if (createPosting)
+  if (isCreatingPost)
     return (
       <div className="w-screen h-screen flex justify-center items-center">
         <CircularProgress />
@@ -71,7 +71,7 @@ const App = () => {
           element={isAuthenticated ? <Navigate to={"/"} /> : <RegisterPage />}
         />
         <Route
-          path="/profile/:username"
+          path="/profile/"
           element={
             <PrivateLayout>
               <Header>
