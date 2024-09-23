@@ -10,11 +10,12 @@ export const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const { signup } = useAuthStore();
+  const { register } = useAuthStore();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signup({ username, email, password, confirmPassword });
+    if (password === confirmPassword)
+      await register({ username, email, password, name: username });
     navigate("/login");
   };
 

@@ -6,11 +6,11 @@ import { useEffect } from "react";
 
 const HomePage = () => {
   const { isAuthenticated } = useAuthStore();
-  const { getPosts } = usePostStore();
+  const { getNewFeeds } = usePostStore();
 
   useEffect(() => {
     const fetchPosts = async () => {
-      await getPosts();
+      await getNewFeeds();
     };
 
     fetchPosts();

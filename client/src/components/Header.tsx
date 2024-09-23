@@ -12,13 +12,15 @@ import {
   MagnifyingGlassIcon as MagnifyingGlassIconSolid,
   UserIcon as UserIconSolid,
 } from "@heroicons/react/24/solid";
+import { useUsersStore } from "../store/usersStore";
 
 interface HeaderProps {
   children: React.ReactNode;
 }
 
 export const Header = ({ children }: HeaderProps) => {
-  const { logout, user } = useAuthStore();
+  const { logout } = useAuthStore();
+  const { user } = useUsersStore();
 
   const handleLogOut = async () => {
     await logout();

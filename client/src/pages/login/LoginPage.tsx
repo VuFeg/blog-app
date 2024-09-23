@@ -1,33 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 
 export const LoginPage = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
 
   const { login } = useAuthStore();
 
   const handleLogIn = async (e: any) => {
     e.preventDefault();
 
-    await login({ username, password });
-    if (remember) {
-      localStorage.setItem("username", username);
-      localStorage.setItem("password", password);
-    }
+    await login({ email, password });
   };
-
-  useEffect(() => {
-    const storedUsername = localStorage.getItem("username") || "";
-    const storedPassword = localStorage.getItem("password") || "";
-
-    if (storedUsername && storedPassword) {
-      setUsername(storedUsername);
-      setPassword(storedPassword);
-    }
-  }, []);
 
   return (
     <section className="bg-gray-50">
@@ -43,12 +28,11 @@ export const LoginPage = () => {
               noValidate
             >
               <div>
-                <label className="block mb-2 text-sm font-medium ">
-                  Tên tài khoản
-                </label>
+                <label className="block mb-2 text-sm font-medium ">Email</label>
                 <input
-                  onChange={(e) => setUsername(e.target.value)}
-                  value={username}
+                  onChange={(e) => setEmail(e.target.value)}
+                  value={email}
+                  type="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                   placeholder="name@company.com"
                   required
@@ -74,7 +58,6 @@ export const LoginPage = () => {
                 <div className="flex items-start">
                   <div className="flex items-center h-5">
                     <input
-                      onChange={(e) => setRemember(e.target.checked)}
                       id="remember"
                       aria-describedby="remember"
                       type="checkbox"

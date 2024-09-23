@@ -11,13 +11,16 @@ import {
   HeartIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
+import { PostType } from "../../types/post.type";
 
-export const Post = () => {
-  const { posts } = usePostStore();
+interface PostProps {
+  listPosts: PostType[];
+}
 
+export const Post = ({ listPosts }: PostProps) => {
   return (
     <>
-      {posts?.map((post) => (
+      {listPosts?.map((post) => (
         <div
           key={post._id}
           className="flex flex-col justify-center border-t py-6"
@@ -39,10 +42,10 @@ export const Post = () => {
                     to={`/profile/${post.user?.username}`}
                     className="cursor-pointer text-md font-semibold"
                   >
-                    {post?.user?.username}
+                    {post.user?.username}
                   </Link>
                   <span className="opacity-15 font-normal">
-                    {formatDistanceToNow(new Date(post?.createdAt), {
+                    {formatDistanceToNow(new Date(post.created_at ?? ""), {
                       addSuffix: true,
                       locale: vi,
                     })}
@@ -53,12 +56,14 @@ export const Post = () => {
                 </button>
               </div>
               <div className="text-md font-normal mr-6">
-                {post.text?.split("\n").map((text: string, index: number) => (
-                  <span key={index}>
-                    {text}
-                    <br />
-                  </span>
-                ))}
+                {post.captions
+                  ?.split("\n")
+                  .map((text: string, index: number) => (
+                    <span key={index}>
+                      {text}
+                      <br />
+                    </span>
+                  ))}
               </div>
             </div>
           </div>
@@ -75,7 +80,7 @@ export const Post = () => {
             </button>
             <button className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300">
               <ChatBubbleLeftIcon className="size-5" />
-              <span>{post?.comments?.lenght || ""}</span>
+              <span>{post?.comments?.length || ""}</span>
             </button>
             <button className="rounded-full p-2 hover:bg-gray-300">
               <ArrowPathRoundedSquareIcon className="size-5" />

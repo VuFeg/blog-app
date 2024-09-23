@@ -1,94 +1,45 @@
 import { create } from "zustand";
-import axios from "axios";
-import toast from "react-hot-toast";
-import { User } from "../types/user.type";
-import { API_ROOT } from "../utils/constant";
+import { LoginReqBody, RegisterReqBody } from "../types/auth.type";
+import { loginApi, logoutApi, registerApi } from "../apis/auth.api";
 
 interface AuthStoreProps {
-  user: User | null;
-  isSigningUp: boolean;
+  isRegistering: boolean;
   isLoggingOut: boolean;
   isLoggingIn: boolean;
-  isCheckingAuth: boolean;
   isAuthenticated: boolean;
 
-  signup: (credentials: object) => Promise<void>;
-  login: (credentials: object) => Promise<void>;
+  register: (body: RegisterReqBody) => Promise<void>;
+  login: (body: LoginReqBody) => Promise<void>;
   logout: () => Promise<void>;
-  checkAuth: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStoreProps>((set) => ({
-  user: null,
-  isSigningUp: false,
+  isRegistering: false,
   isLoggingOut: false,
   isLoggingIn: false,
-  isCheckingAuth: true,
   isAuthenticated: false,
 
-  signup: async (credentials: object) => {
-    set({ isSigningUp: true });
-    try {
-      await axios.post(`/api/auth/register`, credentials);
-
-      set({
-        isSigningUp: false,
-      });
-      toast.success("Account created successfully");
-    } catch (error: any) {
-      set({ isSigningUp: false, isAuthenticated: false });
-      toast.error(error.response.data.message || "Signup failed");
-    }
+  register: async (body: RegisterReqBody) => {
+    set({ isRegistering: true });
+    await registerApi(body);
+    set({ isRegistering: false, isAuthenticated: true });
   },
 
-  login: async (credentials: object) => {
+  login: async (body: LoginReqBody) => {
     set({ isLoggingIn: true });
-
-    try {
-      await axios.post(`/api/auth/login`, credentials);
-
-      set({
-        isLoggingIn: false,
-        isAuthenticated: true,
-      });
-      toast.success("Logged in successfully");
-    } catch (error: any) {
-      set({
-        isLoggingIn: false,
-        isAuthenticated: false,
-      });
-      toast.error(error.response.data.message || "Login failed");
-    }
+    await loginApi(body);
+    set({
+      isLoggingIn: false,
+      isAuthenticated: true,
+    });
   },
 
   logout: async () => {
     set({ isLoggingOut: true });
-    try {
-      await axios.get(`/api/auth/logout`);
-
-      set({
-        user: null,
-        isAuthenticated: false,
-        isLoggingOut: false,
-      });
-      toast.success("Logged out successfully");
-    } catch (error) {
-      set({ isLoggingOut: false });
-      toast.error("Logout failed");
-    }
-  },
-
-  checkAuth: async () => {
-    set({ isCheckingAuth: true });
-    try {
-      const response = await axios.get(`/api/auth/check-auth`);
-      set({
-        user: response.data,
-        isAuthenticated: true,
-        isCheckingAuth: false,
-      });
-    } catch (error) {
-      set({ isCheckingAuth: false, isAuthenticated: false });
-    }
+    await logoutApi();
+    set({
+      isAuthenticated: false,
+      isLoggingOut: false,
+    });
   },
 }));
