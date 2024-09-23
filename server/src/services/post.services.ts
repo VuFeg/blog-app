@@ -101,6 +101,89 @@ class PostServices {
 
     return { posts, total }
   }
+  async getNewFeedsUser(user_id: string, page: number, limit: number, username: string) {
+    const user = await database.users.findOne({ username })
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    const [posts, total] = await Promise.all([
+      database.posts
+        .aggregate<Post>([
+          {
+            $match: { user_id: user._id }
+          },
+          { $sort: { created_at: -1 } },
+          { $skip: (page - 1) * limit },
+          { $limit: limit },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'user_id',
+              foreignField: '_id',
+              as: 'user'
+            }
+          },
+          {
+            $lookup: {
+              from: 'bookmarks',
+              localField: '_id',
+              foreignField: 'post_id',
+              as: 'bookmark'
+            }
+          },
+          {
+            $lookup: {
+              from: 'likes',
+              localField: '_id',
+              foreignField: 'post_id',
+              as: 'like'
+            }
+          },
+          {
+            $addFields: {
+              user: {
+                $map: {
+                  input: '$user',
+                  as: 'item',
+                  in: {
+                    _id: '$$item._id',
+                    name: '$$item.name',
+                    username: '$$item.username',
+                    email: '$$item.email',
+                    avatar: '$$item.avatar'
+                  }
+                }
+              },
+              bookmarks: {
+                $filter: {
+                  input: '$bookmarks',
+                  as: 'item',
+                  cond: {
+                    $eq: ['$$item.user_id', new ObjectId(user_id)]
+                  }
+                }
+              }
+            }
+          },
+          {
+            $unwind: { path: '$user' }
+          },
+          {
+            $project: {
+              user_id: 0
+            }
+          }
+        ])
+        .toArray(),
+
+      database.posts.countDocuments({ user_id: user._id })
+    ])
+    return { posts, total }
+  }
+  async deletePost(post_id: string) {
+    await database.posts.deleteOne({ _id: new ObjectId(post_id) })
+  }
 }
 
 const postServices = new PostServices()
