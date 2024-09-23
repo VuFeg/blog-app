@@ -4,7 +4,7 @@ import { USER_MESSAGES } from '~/constants/message'
 import userServices from '~/services/user.services'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { FollowerBodyReq } from '~/models/requests/follower.request'
-import { UserProfileParams } from '~/models/requests/user.request'
+import { UpdateUserProfileBodyReq, UserProfileParams } from '~/models/requests/user.request'
 
 export const getMeController = async (req: Request, res: Response, next: NextFunction) => {
   const user_id = req.decoded_authorization?.user_id as string
@@ -61,4 +61,16 @@ export const unfollowController = async (
   const result = await userServices.unfollow(user_id, followed_user_id)
 
   return res.status(HTTP_STATUS_CODE.OK).json(result)
+}
+
+export const updateUserProfileController = async (
+  req: Request<ParamsDictionary, any, any, UpdateUserProfileBodyReq>,
+  res: Response,
+  next: NextFunction
+) => {
+  const user_id = req.decoded_authorization?.user_id as string
+  const body = req.body
+  const result = await userServices.updateUserProfile(user_id, body)
+
+  return res.status(HTTP_STATUS_CODE.OK).json({ message: USER_MESSAGES.UPDATE_ME_SUCCESS, result })
 }

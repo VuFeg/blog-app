@@ -5,6 +5,8 @@ import { USER_MESSAGES } from '~/constants/message'
 import { User } from '~/models/schemas/user.schema'
 import { ErrorWithStatus } from '~/models/errors'
 import { HTTP_STATUS_CODE } from '~/constants/httpStatusCode'
+import { UpdateUserProfileBodyReq } from '~/models/requests/user.request'
+import moment from 'moment'
 
 class UserServices {
   async getMe(userId: string) {
@@ -90,6 +92,15 @@ class UserServices {
       .toArray()
 
     return followings
+  }
+  async updateUserProfile(user_id: string, body: UpdateUserProfileBodyReq) {
+    const result = await database.users.findOneAndUpdate(
+      { _id: new ObjectId(user_id) },
+      { $set: body },
+      { returnDocument: 'after' }
+    )
+
+    return result
   }
 }
 

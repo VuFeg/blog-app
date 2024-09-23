@@ -10,3 +10,11 @@ export const uploadImageController = async (req: Request, res: Response, next: N
     result
   })
 }
+
+export const uploadAvatarController = async (req: Request, res: Response, next: NextFunction) => {
+  const result = await mediaServices.uploadImage(req)
+  res.status(HTTP_STATUS_CODE.OK).json({
+    message: 'Upload avatar successfully',
+    result: result[0].url
+  })
+}

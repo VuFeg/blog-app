@@ -4,10 +4,11 @@ import {
   getMeController,
   getSuggestsController,
   getUserProfileController,
-  unfollowController
+  unfollowController,
+  updateUserProfileController
 } from '~/controllers/user.controller'
 import { accessTokenValidator } from '~/middlewares/auth.middleware'
-import { followValidator } from '~/middlewares/user.middleware'
+import { followValidator, updateUserProfileValidator } from '~/middlewares/user.middleware'
 import { wrapHandleRequest } from '~/utils/handler'
 
 const userRouter = Router()
@@ -23,5 +24,6 @@ userRouter.delete(
 userRouter.get('/me', accessTokenValidator, wrapHandleRequest(getMeController))
 userRouter.get('/suggests', accessTokenValidator, wrapHandleRequest(getSuggestsController))
 userRouter.get('/:username', wrapHandleRequest(getUserProfileController))
+userRouter.put('/', accessTokenValidator, updateUserProfileValidator, wrapHandleRequest(updateUserProfileController))
 
 export default userRouter
