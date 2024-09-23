@@ -11,3 +11,7 @@ export interface GetNewFeedsReqQuery {
   page: string
   limit: string
 }
+
+export interface DeletePostBodyReq {
+  post_id: string
+}

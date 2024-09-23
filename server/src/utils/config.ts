@@ -12,5 +12,10 @@ export const envConfig = {
   mongodbPostsCollection: process.env.MONGODB_POSTS_COLLECTION as string,
 
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET as string,
-  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET as string
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET as string,
+
+  awsRegion: process.env.AWS_REGION as string,
+  awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+  awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+  s3BucketName: process.env.S3_BUCKET_NAME as string
 }

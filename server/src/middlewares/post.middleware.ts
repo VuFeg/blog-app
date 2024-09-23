@@ -5,6 +5,7 @@ import { Media } from '~/constants/enum'
 import { HTTP_STATUS_CODE } from '~/constants/httpStatusCode'
 import { POST_MESSAGES } from '~/constants/message'
 import { ErrorWithStatus } from '~/models/errors'
+import database from '~/services/database.services'
 import { numberEnumToArray } from '~/utils/common'
 import { validate } from '~/utils/validation'
 
@@ -107,5 +108,35 @@ export const paginationValidator = validate(
       }
     },
     ['query']
+  )
+)
+
+export const deletePostValidator = validate(
+  checkSchema(
+    {
+      post_id: {
+        custom: {
+          options: async (value, { req }) => {
+            const user_id = req.decoded_authorization?.user_id as string
+            const post_id = new ObjectId(value)
+            const post = await database.posts.findOne({ _id: post_id })
+            if (!post) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS_CODE.NOT_FOUND,
+                message: POST_MESSAGES.POST_NOT_FOUND
+              })
+            }
+            if (post.user_id.toString() !== user_id) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS_CODE.FORBIDDEN,
+                message: "Can not delete other's post"
+              })
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['params']
   )
 )
