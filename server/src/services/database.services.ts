@@ -1,5 +1,6 @@
 import { Collection, Db, MongoClient } from 'mongodb'
 import { Follower } from '~/models/schemas/follower.schema'
+import { Post } from '~/models/schemas/post.schema'
 import { RefreshToken } from '~/models/schemas/refreshToken.schema'
 import { User } from '~/models/schemas/user.schema'
 import { envConfig } from '~/utils/config'
@@ -39,6 +40,10 @@ class DatabaseService {
 
   get followers(): Collection<Follower> {
     return this.db.collection(envConfig.mongodbFollowersCollection)
+  }
+
+  get posts(): Collection<Post> {
+    return this.db.collection(envConfig.mongodbPostsCollection)
   }
 }
 
