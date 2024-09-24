@@ -5,7 +5,7 @@ class NotificationServices {
   async getNotifications(user_id: string) {
     const user_id_obj = new ObjectId(user_id)
 
-    const notifications = await database.notifications.find({ user_id: user_id_obj }).toArray()
+    const notifications = await database.notifications.find({ to: user_id_obj }).toArray()
 
     return notifications
   }

@@ -7,6 +7,7 @@ import { ErrorWithStatus } from '~/models/errors'
 import { HTTP_STATUS_CODE } from '~/constants/httpStatusCode'
 import { UpdateUserProfileBodyReq } from '~/models/requests/user.request'
 import { Notification } from '~/models/schemas/notification.schema'
+import { NotificationType } from '~/constants/enum'
 
 class UserServices {
   async getMe(userId: string) {
@@ -29,9 +30,9 @@ class UserServices {
       const userFollower = await database.users.findOne({ _id: new ObjectId(followed_user_id) })
       await database.notifications.insertOne(
         new Notification({
-          user_id: new ObjectId(followed_user_id),
-          following_user_id: new ObjectId(user_id),
-          message: `${userFollower?.name} đã theo dõi bạn.`,
+          to: new ObjectId(followed_user_id),
+          from: new ObjectId(user_id),
+          type: 'follow' as unknown as NotificationType,
           read: false
         })
       )

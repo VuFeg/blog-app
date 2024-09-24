@@ -66,3 +66,11 @@ export const deletePostController = async (
 
   return res.status(HTTP_STATUS_CODE.OK).json({ message: 'Delete post successfully.' })
 }
+
+export const likePostController = async (req: Request, res: Response, next: NextFunction) => {
+  const user_id = req.decoded_authorization?.user_id as string
+  const { post_id } = req.params
+  const result = await postServices.likePost(user_id, post_id)
+
+  return res.status(HTTP_STATUS_CODE.OK).json(result)
+}

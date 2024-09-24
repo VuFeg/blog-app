@@ -2,6 +2,9 @@ import { CreatePostBodyReq } from '~/models/requests/post.request'
 import database from './database.services'
 import { ObjectId } from 'mongodb'
 import { Post } from '~/models/schemas/post.schema'
+import { Notification } from '~/models/schemas/notification.schema'
+import { NotificationType } from '~/constants/enum'
+import { Like } from '~/models/schemas/like.schema'
 
 class PostServices {
   async createPost(user_id: string, body: CreatePostBodyReq) {
@@ -183,6 +186,27 @@ class PostServices {
   }
   async deletePost(post_id: string) {
     await database.posts.deleteOne({ _id: new ObjectId(post_id) })
+  }
+  async likePost(user_id: string, post_id: string) {
+    const post_id_obj = new ObjectId(post_id)
+    const user_id_obj = new ObjectId(user_id)
+    const isLiked = await database.likes.findOne({ user_id: user_id_obj, post_id: post_id_obj })
+    if (!isLiked) {
+      await database.likes.insertOne(new Like({ user_id: user_id_obj, post_id: post_id_obj }))
+      const post = await database.posts.findOne({ _id: post_id_obj })
+      await database.notifications.insertOne(
+        new Notification({
+          to: new ObjectId(post?.user_id),
+          from: user_id_obj,
+          type: NotificationType.Like,
+          read: false
+        })
+      )
+      return { message: 'Like post successfully' }
+    }
+
+    await database.likes.deleteOne({ user_id: user_id_obj, post_id: post_id_obj })
+    return { message: 'Unlike post successfully' }
   }
 }
 
