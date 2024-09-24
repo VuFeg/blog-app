@@ -16,7 +16,11 @@ const HomePage = () => {
     fetchPosts();
   }, []);
 
-  return <>{isAuthenticated ? <HomeScreen /> : <Navigate to={"/login"} />}</>;
+  if (!isAuthenticated) {
+    return <Navigate to={"/login"} />;
+  }
+
+  return <HomeScreen />;
 };
 
 export default HomePage;

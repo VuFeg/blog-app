@@ -1,7 +1,6 @@
 import avatar from "../../assets/images/avatar.png";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
-import { usePostStore } from "../../store/postStore";
 import { Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
 import {
@@ -69,8 +68,8 @@ export const Post = ({ listPosts }: PostProps) => {
           </div>
           <div className="mt-4 mx-16">
             <img
-              className="h-64 w-full rounded-lg object-cover object-center"
-              src="https://images.unsplash.com/photo-1682407186023-12c70a4a35e0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2832&q=80"
+              className="h-72 w-full rounded-lg object-cover object-center"
+              src={post?.medias[0]?.url}
               alt="nature image"
             />
           </div>

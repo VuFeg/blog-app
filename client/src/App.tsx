@@ -42,7 +42,7 @@ const App = () => {
         <Route path="/post-rep-cmt" element={<PostRepCmt />} />
         <Route path="/post-cmt" element={<CommentPage />} />
         <Route
-          path="/tim-kiem"
+          path="/search"
           element={
             <PrivateLayout>
               <Header>

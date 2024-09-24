@@ -1,19 +1,8 @@
 import avatar from "../../assets/images/avatar.png";
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { useUsersStore } from "../../store/usersStore";
 
 export const Profilepage = () => {
-  const { userProfile, getUserProfile } = useUsersStore();
-
-  const { username } = useParams();
-
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (username) await getUserProfile(username);
-    };
-    fetchUserProfile();
-  }, []);
+  const { user } = useUsersStore();
 
   return (
     <div className="flex justify-center h-screen ">
@@ -21,10 +10,8 @@ export const Profilepage = () => {
         <div className="p-4 mb-4 ">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-3xl font-bold ml-4">
-                {userProfile?.fullName}
-              </h3>
-              <p className="text-base ml-4">{userProfile?.username}</p>
+              <h3 className="text-3xl font-bold ml-4">{user.name}</h3>
+              <p className="text-base ml-4">{user.username}</p>
             </div>
             <img
               src={avatar}
@@ -34,7 +21,7 @@ export const Profilepage = () => {
           </div>
           <div className="flex justify-between items-center">
             <span className="ml-4 opacity-45">
-              {userProfile?.followers.length} người theo dõi
+              {user.followers.length} người theo dõi
             </span>
             Icon
           </div>

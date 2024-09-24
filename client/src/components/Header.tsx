@@ -1,114 +1,113 @@
+import { Button } from "@mui/material";
 import { useAuthStore } from "../store/authStore";
-import { NavLink } from "react-router-dom";
-import {
-  HeartIcon,
-  HomeIcon,
-  MagnifyingGlassIcon,
-  UserIcon,
-} from "@heroicons/react/24/outline";
-import {
-  HomeIcon as HomeIconSolid,
-  HeartIcon as HeartIconSolid,
-  MagnifyingGlassIcon as MagnifyingGlassIconSolid,
-  UserIcon as UserIconSolid,
-} from "@heroicons/react/24/solid";
-import { useUsersStore } from "../store/usersStore";
+import { Link, NavLink } from "react-router-dom";
+import { Heart, House, LogOut, Plus, Search, User } from "lucide-react";
+import { useState } from "react";
+import { ShowCreatePost } from "./post/ShowCreatePost";
 
 interface HeaderProps {
   children: React.ReactNode;
 }
 
 export const Header = ({ children }: HeaderProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const { logout } = useAuthStore();
-  const { user } = useUsersStore();
 
-  const handleLogOut = async () => {
+  const handleLogout = async () => {
     await logout();
   };
 
   return (
     <>
-      <nav className="bg-[#fafafa] border-gray-200 px-4 lg:px-6 py-2.5 mb-6 fixed top-0 left-0 right-0 z-10">
-        <div className="flex flex-wrap justify-between items-center mx-auto">
-          <a href="#" className="flex items-center">
-            <span className="self-center text-xl font-semibold whitespace-nowrap ">
-              Blog WebSite
-            </span>
-          </a>
-          <div className="flex items-center lg:order-2">
-            <button
-              onClick={handleLogOut}
-              className="text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-800 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2  focus:outline-none "
-            >
-              Đăng xuất
-            </button>
-          </div>
-          <div
-            className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1"
-            id="mobile-menu-2"
+      <div className="fixed top-0 left-0 right-0 md:hidden block py-1 px-4 z-10">
+        <div className="flex justify-between items-center">
+          <div></div>
+          <Link to={"/"}>
+            <img src="/logo.png" alt="" className="cursor-pointer" />
+          </Link>
+          <Button
+            className="px-8 py-4 rounded-xl transition-all ease-in-out hover:bg-gray-300"
+            onClick={handleLogout}
           >
-            <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
-              <li>
-                <NavLink
-                  to="/"
-                  className="block py-2 px-4 rounded-xl hover:bg-gray-300 text-gray-700 hover:-translate-y-1 transform transition"
-                >
-                  {({ isActive }) =>
-                    !isActive ? (
-                      <HomeIcon className="size-6" />
-                    ) : (
-                      <HomeIconSolid className="size-6" />
-                    )
-                  }
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/tim-kiem"
-                  className="block py-2 px-4 rounded-xl hover:bg-gray-300 text-gray-700 hover:-translate-y-1 transform transition"
-                >
-                  {({ isActive }) =>
-                    !isActive ? (
-                      <MagnifyingGlassIcon className="size-6" />
-                    ) : (
-                      <MagnifyingGlassIconSolid className="size-6" />
-                    )
-                  }
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/hoat-dong"
-                  className="block py-2 px-4 rounded-xl hover:bg-gray-300 text-gray-700 hover:-translate-y-1 transform transition"
-                >
-                  {({ isActive }) =>
-                    !isActive ? (
-                      <HeartIcon className="size-6" />
-                    ) : (
-                      <HeartIconSolid className="size-6" />
-                    )
-                  }
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to={`/profile/${user?.username}`}
-                  className="block py-2 px-4 rounded-xl hover:bg-gray-300 text-gray-700 hover:-translate-y-1 transform transition"
-                >
-                  {({ isActive }) =>
-                    !isActive ? (
-                      <UserIcon className="size-6" />
-                    ) : (
-                      <UserIconSolid className="size-6" />
-                    )
-                  }
-                </NavLink>
-              </li>
-            </ul>
-          </div>
+            <LogOut className="size-8 text-black" />
+          </Button>
         </div>
-      </nav>
-      <div className="mt-20">{children}</div>
+      </div>
+      <div className="fixed md:top-0 left-0 bottom-0 md:py-4 z-10 md:mx-1">
+        <div className="flex md:flex-col md:justify-between md:h-full items-center">
+          <Link to={"/"} className="md:block hidden">
+            <img src="/logo.png" alt="" className="cursor-pointer" />
+          </Link>
+          <div className="flex flex-1 justify-between md:justify-center md:flex-col items-center md:gap-8">
+            <NavLink to="/">
+              {({ isActive }) =>
+                isActive ? (
+                  <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
+                    <House className="size-8" />
+                  </div>
+                ) : (
+                  <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
+                    <House className="text-gray-500 size-8" />
+                  </div>
+                )
+              }
+            </NavLink>
+            <NavLink to="/search">
+              {({ isActive }) =>
+                isActive ? (
+                  <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
+                    <Search className="size-8" />
+                  </div>
+                ) : (
+                  <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
+                    <Search className="text-gray-500 size-8" />
+                  </div>
+                )
+              }
+            </NavLink>
+            <button onClick={() => setIsOpen(!isOpen)}>
+              <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl bg-gray-300/30">
+                <Plus className="size-8 text-gray-500 hover:text-black" />
+              </div>
+            </button>
+            <NavLink to="/notification">
+              {({ isActive }) =>
+                isActive ? (
+                  <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
+                    <Heart className="size-8" />
+                  </div>
+                ) : (
+                  <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
+                    <Heart className="size-8 text-gray-500" />
+                  </div>
+                )
+              }
+            </NavLink>
+            <NavLink to="/profile">
+              {({ isActive }) =>
+                isActive ? (
+                  <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
+                    <User className="size-8 " />
+                  </div>
+                ) : (
+                  <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
+                    <User className="size-8 text-gray-500" />
+                  </div>
+                )
+              }
+            </NavLink>
+          </div>
+          <Button
+            variant="text"
+            className="px-2 py-1 md:block hidden"
+            onClick={handleLogout}
+          >
+            <LogOut className="size-8 " />
+          </Button>
+        </div>
+      </div>
+      <ShowCreatePost isOpen={isOpen} setIsOpen={setIsOpen} />
+      {children}
     </>
   );
 };
