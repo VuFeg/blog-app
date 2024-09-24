@@ -6,7 +6,7 @@ import { User } from '~/models/schemas/user.schema'
 import { ErrorWithStatus } from '~/models/errors'
 import { HTTP_STATUS_CODE } from '~/constants/httpStatusCode'
 import { UpdateUserProfileBodyReq } from '~/models/requests/user.request'
-import moment from 'moment'
+import { Notification } from '~/models/schemas/notification.schema'
 
 class UserServices {
   async getMe(userId: string) {
@@ -25,6 +25,15 @@ class UserServices {
     if (!follower) {
       await database.followers.insertOne(
         new Follower({ user_id: new ObjectId(user_id), followed_user_id: new ObjectId(followed_user_id) })
+      )
+      const userFollower = await database.users.findOne({ _id: new ObjectId(followed_user_id) })
+      await database.notifications.insertOne(
+        new Notification({
+          user_id: new ObjectId(followed_user_id),
+          following_user_id: new ObjectId(user_id),
+          message: `${userFollower?.name} đã theo dõi bạn.`,
+          read: false
+        })
       )
       return { message: USER_MESSAGES.FOLLOW_SUCCESS }
     }

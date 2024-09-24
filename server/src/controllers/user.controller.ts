@@ -51,7 +51,7 @@ export const followController = async (
 }
 
 export const unfollowController = async (
-  req: Request<ParamsDictionary, any, any>,
+  req: Request<ParamsDictionary, any, any, FollowerBodyReq>,
   res: Response,
   next: NextFunction
 ) => {

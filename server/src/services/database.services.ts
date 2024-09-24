@@ -1,5 +1,6 @@
 import { Collection, Db, MongoClient } from 'mongodb'
 import { Follower } from '~/models/schemas/follower.schema'
+import { Notification } from '~/models/schemas/notification.schema'
 import { Post } from '~/models/schemas/post.schema'
 import { RefreshToken } from '~/models/schemas/refreshToken.schema'
 import { User } from '~/models/schemas/user.schema'
@@ -44,6 +45,10 @@ class DatabaseService {
 
   get posts(): Collection<Post> {
     return this.db.collection(envConfig.mongodbPostsCollection)
+  }
+
+  get notifications(): Collection<Notification> {
+    return this.db.collection(envConfig.mongodbNotificationsCollection)
   }
 }
 
