@@ -114,6 +114,12 @@ export const accessTokenValidator = validate(
         trim: true,
         custom: {
           options: async (value, { req }) => {
+            if (!value) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS_CODE.UNAUTHORIZED,
+                message: USER_MESSAGES.ACCESS_TOKEN_IS_REQUIRED
+              })
+            }
             const accessToken = (value || '').split(' ')[1]
             if (!accessToken) {
               throw new ErrorWithStatus({

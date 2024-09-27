@@ -50,19 +50,6 @@ export const followController = async (
   return res.status(HTTP_STATUS_CODE.OK).json(result)
 }
 
-export const unfollowController = async (
-  req: Request<ParamsDictionary, any, any, FollowerBodyReq>,
-  res: Response,
-  next: NextFunction
-) => {
-  const user_id = req.decoded_authorization?.user_id as string
-  const followed_user_id = req.params.followed_user_id
-
-  const result = await userServices.unfollow(user_id, followed_user_id)
-
-  return res.status(HTTP_STATUS_CODE.OK).json(result)
-}
-
 export const updateUserProfileController = async (
   req: Request<ParamsDictionary, any, any, UpdateUserProfileBodyReq>,
   res: Response,
@@ -73,4 +60,11 @@ export const updateUserProfileController = async (
   const result = await userServices.updateUserProfile(user_id, body)
 
   return res.status(HTTP_STATUS_CODE.OK).json({ message: USER_MESSAGES.UPDATE_ME_SUCCESS, result })
+}
+
+export const searchUserController = async (req: Request, res: Response, next: NextFunction) => {
+  const { keyword } = req.params
+  const result = await userServices.searchUser(keyword)
+
+  return res.status(HTTP_STATUS_CODE.OK).json({ message: 'Search user successfully.', result })
 }

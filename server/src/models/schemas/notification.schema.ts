@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb'
 import { NotificationType } from '~/constants/enum'
 
-type NotificationsType = {
+export type NotificationsType = {
   _id?: ObjectId
   to: ObjectId
   from: ObjectId

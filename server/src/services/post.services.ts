@@ -186,6 +186,7 @@ class PostServices {
   }
   async deletePost(post_id: string) {
     await database.posts.deleteOne({ _id: new ObjectId(post_id) })
+    await database.likes.deleteMany({ post_id: new ObjectId(post_id) })
   }
   async likePost(user_id: string, post_id: string) {
     const post_id_obj = new ObjectId(post_id)
@@ -194,14 +195,15 @@ class PostServices {
     if (!isLiked) {
       await database.likes.insertOne(new Like({ user_id: user_id_obj, post_id: post_id_obj }))
       const post = await database.posts.findOne({ _id: post_id_obj })
-      await database.notifications.insertOne(
-        new Notification({
-          to: new ObjectId(post?.user_id),
-          from: user_id_obj,
-          type: NotificationType.Like,
-          read: false
-        })
-      )
+      if (user_id !== post?.user_id.toString())
+        await database.notifications.insertOne(
+          new Notification({
+            to: new ObjectId(post?.user_id),
+            from: user_id_obj,
+            type: NotificationType.Like,
+            read: false
+          })
+        )
       return { message: 'Like post successfully' }
     }
 

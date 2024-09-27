@@ -112,3 +112,21 @@ export const updateUserProfileValidator = validate(
     ['body']
   )
 )
+
+export const searchUserValidator = validate(
+  checkSchema(
+    {
+      keyword: {
+        trim: true,
+        notEmpty: {
+          errorMessage: 'Keyword is required'
+        },
+        isLength: {
+          errorMessage: 'Keyword length must be from 1 to 100',
+          options: { min: 1, max: 100 }
+        }
+      }
+    },
+    ['params']
+  )
+)

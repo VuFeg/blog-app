@@ -18,29 +18,6 @@ class UserServices {
     return user
   }
   async follow(user_id: string, followed_user_id: string) {
-    const follower = await database.users.findOne({
-      _id: new ObjectId(user_id),
-      followed_user_id: new ObjectId(followed_user_id)
-    })
-
-    if (!follower) {
-      await database.followers.insertOne(
-        new Follower({ user_id: new ObjectId(user_id), followed_user_id: new ObjectId(followed_user_id) })
-      )
-      const userFollower = await database.users.findOne({ _id: new ObjectId(followed_user_id) })
-      await database.notifications.insertOne(
-        new Notification({
-          to: new ObjectId(followed_user_id),
-          from: new ObjectId(user_id),
-          type: 'follow' as unknown as NotificationType,
-          read: false
-        })
-      )
-      return { message: USER_MESSAGES.FOLLOW_SUCCESS }
-    }
-    return { message: USER_MESSAGES.FOLLOWED }
-  }
-  async unfollow(user_id: string, followed_user_id: string) {
     const follower = await database.followers.findOne({
       user_id: new ObjectId(user_id),
       followed_user_id: new ObjectId(followed_user_id)
@@ -53,7 +30,18 @@ class UserServices {
       })
       return { message: USER_MESSAGES.UNFOLLOW_SUCCESS }
     }
-    return { message: USER_MESSAGES.ALREADY_UNFOLLOWED }
+    await database.followers.insertOne(
+      new Follower({ user_id: new ObjectId(user_id), followed_user_id: new ObjectId(followed_user_id) })
+    )
+    await database.notifications.insertOne(
+      new Notification({
+        to: new ObjectId(followed_user_id),
+        from: new ObjectId(user_id),
+        type: NotificationType.Follow,
+        read: false
+      })
+    )
+    return { message: USER_MESSAGES.FOLLOW_SUCCESS }
   }
   async getSuggests(user_id: string) {
     const user_id_obj = new ObjectId(user_id)
@@ -64,7 +52,7 @@ class UserServices {
     const followed_user_ids = follower.map((item) => item.followed_user_id)
     followed_user_ids.push(user_id_obj)
 
-    const user = await database.users
+    const users = await database.users
       .aggregate<User>([
         { $match: { _id: { $nin: followed_user_ids } } },
         { $sample: { size: 5 } },
@@ -72,7 +60,15 @@ class UserServices {
       ])
       .toArray()
 
-    return user
+    const usersWithFollowInfo = await Promise.all(
+      users.map(async (user) => {
+        const followers = user._id ? await this.getFollowers(user._id.toString()) : []
+        const followings = user._id ? await this.getFollowings(user._id.toString()) : []
+        return { ...user, followers, followings }
+      })
+    )
+
+    return usersWithFollowInfo
   }
   async getUserProfile(username: string) {
     const user = await database.users.findOne(
@@ -91,14 +87,22 @@ class UserServices {
   }
   async getFollowers(user_id: string) {
     const user_followers = await database.followers.find({ followed_user_id: new ObjectId(user_id) }).toArray()
-    const followers = await database.users.find({ _id: { $in: user_followers.map((item) => item.user_id) } }).toArray()
+    const followers = await database.users
+      .find(
+        { _id: { $in: user_followers.map((item) => item.user_id) } },
+        { projection: { password: 0, forgot_password_token: 0, verify_status: 0 } }
+      )
+      .toArray()
 
     return followers
   }
   async getFollowings(user_id: string) {
     const user_followings = await database.followers.find({ user_id: new ObjectId(user_id) }).toArray()
     const followings = await database.users
-      .find({ _id: { $in: user_followings.map((item) => item.followed_user_id) } })
+      .find(
+        { _id: { $in: user_followings.map((item) => item.followed_user_id) } },
+        { projection: { password: 0, forgot_password_token: 0, verify_status: 0 } }
+      )
       .toArray()
 
     return followings
@@ -111,6 +115,26 @@ class UserServices {
     )
 
     return result
+  }
+  async searchUser(keyword: string) {
+    const users = await database.users
+      .find(
+        {
+          $or: [{ username: { $regex: keyword, $options: 'i' } }, { name: { $regex: keyword, $options: 'i' } }]
+        },
+        { projection: { password: 0, forgot_password_token: 0 } }
+      )
+      .toArray()
+
+    const usersWithFollowInfo = await Promise.all(
+      users.map(async (user) => {
+        const followers = await this.getFollowers(user._id.toString())
+        const followings = await this.getFollowings(user._id.toString())
+        return { ...user, followers, followings }
+      })
+    )
+
+    return usersWithFollowInfo
   }
 }
 

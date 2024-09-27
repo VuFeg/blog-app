@@ -25,7 +25,6 @@ export const registerController = async (
   next: NextFunction
 ) => {
   const body = req.body
-  console.log(body)
   const result = await authService.register(body)
   return res.status(HTTP_STATUS_CODE.CREATED).json({
     message: USER_MESSAGES.REGISTER_SUCCESSFULLY,
@@ -39,6 +38,8 @@ export const logoutController = async (
   next: NextFunction
 ) => {
   const refreshToken = req.body.refreshToken
-  const result = await authService.logout(refreshToken)
+  const accessTokenDecoded = req.decoded_authorization
+  const refreshTokenDecoded = req.decoded_refreshToken
+  const result = await authService.logout(refreshToken, accessTokenDecoded, refreshTokenDecoded)
   return res.status(HTTP_STATUS_CODE.OK).json(result)
 }
