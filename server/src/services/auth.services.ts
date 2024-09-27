@@ -7,6 +7,8 @@ import { RegisterReqBody } from '~/models/requests/auth.request'
 import { User } from '~/models/schemas/user.schema'
 import { hashPassword } from '~/utils/hashPassword'
 import { USER_MESSAGES } from '~/constants/message'
+import { ErrorWithStatus } from '~/models/errors'
+import { HTTP_STATUS_CODE } from '~/constants/httpStatusCode'
 
 class AuthService {
   private signAccessToken(user_id: string) {
@@ -44,7 +46,13 @@ class AuthService {
     return { accessToken, refreshToken }
   }
 
-  async logout(refreshToken: string) {
+  async logout(refreshToken: string, accessTokenDecoded: any, refreshTokenDecoded: any) {
+    if (accessTokenDecoded.user_id !== refreshTokenDecoded.user_id) {
+      throw new ErrorWithStatus({
+        message: 'Invalid token',
+        status: HTTP_STATUS_CODE.UNAUTHORIZED
+      })
+    }
     await database.refreshToken.deleteOne({ token: refreshToken })
     return { message: USER_MESSAGES.LOGOUT_SUCCESS }
   }

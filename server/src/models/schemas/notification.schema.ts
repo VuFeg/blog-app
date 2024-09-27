@@ -1,10 +1,11 @@
 import { ObjectId } from 'mongodb'
+import { NotificationType } from '~/constants/enum'
 
-type NotificationType = {
+export type NotificationsType = {
   _id?: ObjectId
-  user_id: ObjectId
-  following_user_id: ObjectId
-  message: string
+  to: ObjectId
+  from: ObjectId
+  type: NotificationType
   read: boolean
   created_at?: Date
   updated_at?: Date
@@ -12,19 +13,19 @@ type NotificationType = {
 
 export class Notification {
   _id?: ObjectId
-  user_id: ObjectId
-  following_user_id: ObjectId
-  message: string
+  to: ObjectId
+  from: ObjectId
+  type: NotificationType
   read: boolean
   created_at: Date
   updated_at: Date
 
-  constructor(notification: NotificationType) {
+  constructor(notification: NotificationsType) {
     const date = new Date()
     this._id = notification._id
-    this.user_id = notification.user_id
-    this.following_user_id = notification.following_user_id
-    this.message = notification.message
+    this.to = notification.to
+    this.from = notification.from
+    this.type = notification.type
     this.read = notification.read
     this.created_at = notification.created_at || date
     this.updated_at = notification.updated_at || date

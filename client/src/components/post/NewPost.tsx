@@ -8,7 +8,7 @@ export const NewPost = () => {
 
   return (
     <>
-      <div className="flex items-center gap-5 p-4">
+      <div className="flex items-center gap-5 p-4 border rounded-xl my-4 bg-white shadow-lg">
         <div className="p-1 rounded-full border cursor-pointer">
           <Avatar
             alt="Remy Sharp"

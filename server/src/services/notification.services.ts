@@ -5,7 +5,35 @@ class NotificationServices {
   async getNotifications(user_id: string) {
     const user_id_obj = new ObjectId(user_id)
 
-    const notifications = await database.notifications.find({ user_id: user_id_obj }).toArray()
+    const notifications = await database.notifications
+      .aggregate([
+        {
+          $match: {
+            to: user_id_obj
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'from',
+            foreignField: '_id',
+            as: 'from'
+          }
+        },
+        {
+          $unwind: '$from'
+        },
+        {
+          $project: {
+            'from.password': 0,
+            'from.forgot_password_token': 0
+          }
+        },
+        {
+          $sort: { created_at: -1 }
+        }
+      ])
+      .toArray()
 
     return notifications
   }

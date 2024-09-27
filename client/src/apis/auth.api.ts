@@ -30,20 +30,26 @@ export const registerApi = async (body: RegisterReqBody) => {
 export const logoutApi = async () => {
   const refreshToken = localStorage.getItem("refreshToken");
   const accessToken = localStorage.getItem("accessToken");
-  const res = await authorizedAxiosInstance.post(
-    `${API_ROOT}/api/auth/logout`,
-    {
-      refreshToken,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+  try {
+    const res = await authorizedAxiosInstance.post(
+      `${API_ROOT}/api/auth/logout`,
+      {
+        refreshToken,
       },
-    }
-  );
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
 
-  toast.success(res.data.message);
+    toast.success(res.data.message);
+  } catch (error) {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    window.location.reload();
+  }
 };

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
+import { Header } from "../components/Header";
 
 interface PrivateLayoutProps {
   children: React.ReactNode;
@@ -16,5 +17,10 @@ export const PrivateLayout = ({ children }: PrivateLayoutProps) => {
     }
   }, [isAuthenticated]);
 
-  return <>{children}</>;
+  return (
+    <>
+      <Header />
+      {children}
+    </>
+  );
 };

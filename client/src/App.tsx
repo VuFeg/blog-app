@@ -1,19 +1,18 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import HomePage from "./pages/home/HomePage";
-import { Header } from "./components/Header";
 import { Profilepage } from "./pages/profile/ProfilePage";
 import { PostRepCmt } from "./components/PostRepCmt";
 import FixHome from "./components/FixHome";
 import { usePostStore } from "./store/postStore";
 import { CircularProgress } from "@mui/material";
 import { SearchPage } from "./pages/search/SearchPage";
-import { SuggestPage } from "./pages/suggest/SuggestPage";
 import { LoginPage } from "./pages/login/LoginPage";
 import { RegisterPage } from "./pages/register/RegisterPage";
 import { PrivateLayout } from "./layouts/PrivateLayout";
 import { useAuthStore } from "./store/authStore";
 import { CommentPage } from "./pages/comment/CommentPage";
+import { NotificationPage } from "./pages/notification/NotificationPage";
 
 const App = () => {
   const { isAuthenticated } = useAuthStore();
@@ -33,31 +32,25 @@ const App = () => {
           path="/"
           element={
             <PrivateLayout>
-              <Header>
-                <HomePage />
-              </Header>
+              <HomePage />
             </PrivateLayout>
           }
         />
         <Route path="/post-rep-cmt" element={<PostRepCmt />} />
         <Route path="/post-cmt" element={<CommentPage />} />
         <Route
-          path="/search"
+          path="/searchs"
           element={
             <PrivateLayout>
-              <Header>
-                <SearchPage />
-              </Header>
+              <SearchPage />
             </PrivateLayout>
           }
         />
         <Route
-          path="/hoat-dong"
+          path="/notifications"
           element={
             <PrivateLayout>
-              <Header>
-                <SuggestPage />
-              </Header>
+              <NotificationPage />
             </PrivateLayout>
           }
         />
@@ -71,12 +64,10 @@ const App = () => {
           element={isAuthenticated ? <Navigate to={"/"} /> : <RegisterPage />}
         />
         <Route
-          path="/profile/"
+          path="/profile"
           element={
             <PrivateLayout>
-              <Header>
-                <Profilepage />
-              </Header>
+              <Profilepage />
             </PrivateLayout>
           }
         />

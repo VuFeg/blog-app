@@ -9,9 +9,13 @@ interface MainLayoutProps {
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const accessToken = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
-  if (accessToken && refreshToken) {
-    useAuthStore.setState({ isAuthenticated: true });
-  }
+  useEffect(() => {
+    if (accessToken && refreshToken) {
+      useAuthStore.setState({ isAuthenticated: true });
+    } else {
+      useAuthStore.setState({ isAuthenticated: false });
+    }
+  }, [accessToken, refreshToken]);
 
   const { getMe } = useUsersStore();
 
@@ -21,7 +25,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
     };
 
     checkMe();
-  }, []);
+  }, [getMe]);
 
   return children;
 };

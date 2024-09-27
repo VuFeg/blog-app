@@ -37,6 +37,22 @@ export type User = {
   website: string;
   avatar: string;
 
-  followers: UserType[];
-  followings: UserType[];
+  followers: [
+    {
+      _id: string;
+      user_id: string;
+      followed_user_id: string;
+      created_at: Date;
+      updated_at: Date;
+    }
+  ];
+  followings: [
+    {
+      _id: string;
+      followed_user_id: string;
+      user_id: string;
+      created_at: Date;
+      updated_at: Date;
+    }
+  ];
 };

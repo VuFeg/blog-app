@@ -25,7 +25,7 @@ export const deleteNotificationValidator = validate(
               message: 'Notification not found'
             })
           }
-          if (notification.user_id.toString() !== user_id) {
+          if (notification.to.toString() !== user_id) {
             throw new ErrorWithStatus({
               status: HTTP_STATUS_CODE.FORBIDDEN,
               message: 'You are not authorized to delete this notification'

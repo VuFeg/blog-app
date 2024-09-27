@@ -18,3 +18,15 @@ export enum Media {
   Image,
   Video
 }
+
+export enum NotificationType {
+  Like,
+  Comment,
+  Follow
+}
+
+export enum GenderType {
+  Male,
+  Female,
+  Other
+}
