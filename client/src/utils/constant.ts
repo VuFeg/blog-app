@@ -1,1 +1,2 @@
-export const API_ROOT = `http://localhost:8080`;
+
+export const API_ROOT = `http://localhost:${import.meta.env.VITE_PORT}`;
