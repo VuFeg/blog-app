@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import { User, UserType } from "../types/user.type";
+import { User } from "../types/user.type";
 import { getMeApi, getUserSuggestsApi } from "../apis/user.api";
 
 interface UsersStoreProps {
   user: User;
-  userSuggests: UserType[];
+  userSuggests: User[];
   gettingMe: boolean;
   gettingUserSuggests: boolean;
   getMe: () => Promise<void>;

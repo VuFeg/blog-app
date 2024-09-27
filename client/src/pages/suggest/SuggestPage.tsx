@@ -2,8 +2,8 @@ import avatar from "../../assets/images/avatar.png";
 
 export const SuggestPage = () => {
   return (
-    <div className="flex justify-center h-screen ">
-      <div className="bg-white w-[770px] rounded-t-3xl border shadow-lg">
+    <div className="max-w-2xl mx-auto bg-white border rounded-t-3xl shadow-lg">
+      <div className="flex flex-col">
         <div className="flex gap-5 p-5  ">
           <img
             src={avatar}

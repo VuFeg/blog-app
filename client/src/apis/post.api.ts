@@ -34,3 +34,32 @@ export const getNewFeedsApi = async () => {
 
   return res.data.result;
 };
+
+export const unLikeAndLikePostApi = async (post_id: string) => {
+  const accessToken = localStorage.getItem("accessToken");
+  const res = await authorizedAxiosInstance.post(
+    `${API_ROOT}/api/posts/like/${post_id}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return res.data.result;
+};
+
+export const deletePostApi = async (post_id: string) => {
+  const accessToken = localStorage.getItem("accessToken");
+  const res = await authorizedAxiosInstance.delete(
+    `${API_ROOT}/api/posts/${post_id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return res.data.result;
+};

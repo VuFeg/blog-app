@@ -5,11 +5,7 @@ import { Heart, House, LogOut, Plus, Search, User } from "lucide-react";
 import { useState } from "react";
 import { ShowCreatePost } from "./post/ShowCreatePost";
 
-interface HeaderProps {
-  children: React.ReactNode;
-}
-
-export const Header = ({ children }: HeaderProps) => {
+export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { logout } = useAuthStore();
 
@@ -52,7 +48,7 @@ export const Header = ({ children }: HeaderProps) => {
                 )
               }
             </NavLink>
-            <NavLink to="/search">
+            <NavLink to="/searchs">
               {({ isActive }) =>
                 isActive ? (
                   <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
@@ -70,7 +66,7 @@ export const Header = ({ children }: HeaderProps) => {
                 <Plus className="size-8 text-gray-500 hover:text-black" />
               </div>
             </button>
-            <NavLink to="/notification">
+            <NavLink to="/notifications">
               {({ isActive }) =>
                 isActive ? (
                   <div className="px-8 py-4 md:px-4 md:py-2 rounded-xl transition-all ease-in-out hover:bg-gray-300/30">
@@ -97,17 +93,12 @@ export const Header = ({ children }: HeaderProps) => {
               }
             </NavLink>
           </div>
-          <Button
-            variant="text"
-            className="px-2 py-1 md:block hidden"
-            onClick={handleLogout}
-          >
+          <button className="px-2 py-1 md:block hidden" onClick={handleLogout}>
             <LogOut className="size-8 " />
-          </Button>
+          </button>
         </div>
       </div>
       <ShowCreatePost isOpen={isOpen} setIsOpen={setIsOpen} />
-      {children}
     </>
   );
 };

@@ -1,12 +1,47 @@
+import { Avatar } from "@mui/material";
 import avatar from "../../assets/images/avatar.png";
+import { useUsersStore } from "../../store/usersStore";
+import { useEffect, useState } from "react";
+import { User } from "../../types/user.type";
+import {
+  followUserApi,
+  getUserSuggestsApi,
+  searchUserApi,
+} from "../../apis/user.api";
 
 export const SearchPage = () => {
+  const [userSuggests, setUserSuggests] = useState<User[]>([]);
+  const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [search, setSearch] = useState("");
+
+  const { user } = useUsersStore();
+  console.log(user);
+  useEffect(() => {
+    const fetchUserSuggests = async () => {
+      const data = await getUserSuggestsApi();
+
+      setUserSuggests(data);
+    };
+
+    fetchUserSuggests();
+  }, []);
+  const handleFollow = async (user: User) => {
+    await followUserApi(user._id);
+  };
+  const handleSearch = async () => {
+    const data = await searchUserApi(search);
+    setSearchResults(data);
+  };
+
   return (
-    <div className="flex justify-center h-screen ">
-      <div className="bg-white w-[770px] rounded-t-3xl border shadow-lg">
-        <div className="w-full p-6 rounded-lg">
+    <div className="max-w-2xl mx-auto bg-white rounded-t-3xl border shadow-lg min-h-screen">
+      <div className="flex flex-col justify-center">
+        <div className="p-6 rounded-lg">
           <div className="relative">
-            <button className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+            <button
+              className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500"
+              onClick={handleSearch}
+            >
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -22,32 +57,90 @@ export const SearchPage = () => {
               </svg>
             </button>
             <input
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch();
+              }}
+              onChange={(e) => setSearch(e.target.value)}
               type="text"
               placeholder="Tìm kiếm"
-              className="bg-gray-100 w-full px-4 py-2 pr-12 border rounded-lg focus:outline-none  "
+              className="bg-gray-100 w-full px-4 py-2 pr-12 border rounded-2xl focus:outline-none"
             />
           </div>
         </div>
         <div className="ml-6 opacity-30">
           <b>Gợi ý theo dõi</b>
         </div>
-        <div className="flex gap-5 p-5  ">
-          <img
-            src={avatar}
-            alt=""
-            className="w-12 h-12 p-object-cover rounded-full"
-          />
-          <div className=" flex flex-1 border-b pb-3">
-            <div className="flex flex-1 flex-col ">
-              <div className="ml-3 font-bold">wnhu293</div>
-              <div className=" ml-3 opacity-50 font-normal">Quỳnh Như</div>
-              <div className="ml-3 mt-2">41 người theo dõi</div>
-            </div>
-            <button className="border px-4 py-1 w-28 h-9 flex justify-center rounded-lg font-medium">
-              Theo dõi
-            </button>
-          </div>
-        </div>
+        {searchResults.length === 0
+          ? userSuggests?.map((userSuggest) => (
+              <div key={userSuggest._id} className="flex gap-5 pl-5 pt-6">
+                <Avatar src={avatar} className="mt-2" />
+                <div className=" flex flex-col flex-1 border-b pb-2 pr-5">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="font-bold">{userSuggest.username}</div>
+                      <div className="opacity-50 font-normal">
+                        {userSuggest.name}
+                      </div>
+                    </div>
+                    {userSuggest.followers?.some(
+                      (item) => item.user_id === user._id
+                    ) ? (
+                      <button
+                        onClick={() => handleFollow(userSuggest)}
+                        className="font-semibold border px-4 py-1 rounded-xl border-gray-500 text-gray-400"
+                      >
+                        Đang theo dõi
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleFollow(userSuggest)}
+                        className="font-semibold border px-4 py-1 rounded-xl border-gray-500"
+                      >
+                        Theo dõi
+                      </button>
+                    )}
+                  </div>
+                  <div className="mt-2">
+                    {userSuggest.followers?.length} người theo dõi
+                  </div>
+                </div>
+              </div>
+            ))
+          : searchResults?.map((userSearch) => (
+              <div key={userSearch._id} className="flex gap-5 pl-5 pt-6">
+                <Avatar src={avatar} className="mt-2" />
+                <div className=" flex flex-col flex-1 border-b pb-2 pr-5">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <div className="font-bold">{userSearch.username}</div>
+                      <div className="opacity-50 font-normal">
+                        {userSearch.name}
+                      </div>
+                    </div>
+                    {userSearch.followers?.some(
+                      (item) => item._id === user._id
+                    ) ? (
+                      <button
+                        onClick={() => handleFollow(userSearch)}
+                        className="font-semibold border px-4 py-1 rounded-xl border-gray-500 text-gray-400"
+                      >
+                        Đang theo dõi
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleFollow(userSearch)}
+                        className="font-semibold border px-4 py-1 rounded-xl border-gray-500"
+                      >
+                        Theo dõi
+                      </button>
+                    )}
+                  </div>
+                  <div className="mt-2">
+                    {userSearch.followers?.length} người theo dõi
+                  </div>
+                </div>
+              </div>
+            ))}
       </div>
     </div>
   );

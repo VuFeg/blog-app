@@ -21,7 +21,7 @@ export const Profilepage = () => {
           </div>
           <div className="flex justify-between items-center">
             <span className="ml-4 opacity-45">
-              {user.followers.length} người theo dõi
+              {user.followers?.length} người theo dõi
             </span>
             Icon
           </div>

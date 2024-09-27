@@ -1,3 +1,5 @@
+import { User } from "./user.type";
+
 export type MediaType = {
   url: string;
   type: Media;
@@ -33,5 +35,11 @@ export type PostType = {
     avatar: string;
   };
   bookmarks: any[];
-  likes: any[];
+  like: [
+    {
+      _id: string;
+      user_id: string;
+      created_at: string;
+    }
+  ];
 };

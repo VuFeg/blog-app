@@ -18,9 +18,10 @@ export const HomeScreen = () => {
   useEffect(() => {
     setListPosts(posts);
   }, [posts]);
+
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-t-3xl border shadow-lg mx-4 md:mx-0 h-full">
+    <div className="max-w-2xl mx-auto my-4">
+      <div className="h-full">
         <NewPost />
         <Post listPosts={listPosts} />
       </div>
