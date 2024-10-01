@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { usePostStore } from "../../store/postStore";
 import { uploadMediaApi } from "../../apis/media.api";
 import { Hash, Image, MenuIcon } from "lucide-react";
-
 interface ShowCreatePostProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;

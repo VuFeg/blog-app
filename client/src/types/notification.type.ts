@@ -1,4 +1,4 @@
-import { UserType } from "./user.type";
+import { User } from "./user.type";
 
 export enum NotificationType {
   Like,
@@ -9,7 +9,7 @@ export enum NotificationType {
 export type NotificationsType = {
   _id?: string;
   to: string;
-  from: UserType;
+  from: User;
   type: NotificationType;
   read: boolean;
   created_at?: Date;

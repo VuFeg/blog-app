@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import { LoginReqBody, RegisterReqBody } from "../types/auth.type";
-import { loginApi, logoutApi, registerApi } from "../apis/auth.api";
+import axios from "axios";
+import { API_ROOT } from "../utils/constant";
+import toast from "react-hot-toast";
 
 interface AuthStoreProps {
   isRegistering: boolean;
@@ -20,26 +22,54 @@ export const useAuthStore = create<AuthStoreProps>((set) => ({
   isAuthenticated: false,
 
   register: async (body: RegisterReqBody) => {
-    set({ isRegistering: true });
-    await registerApi(body);
-    set({ isRegistering: false, isAuthenticated: true });
+    try {
+      set({ isRegistering: true, isAuthenticated: false });
+      const res = await axios.post(`${API_ROOT}/api/auth/register`, body);
+      localStorage.setItem("accessToken", res.data.result.accessToken);
+      localStorage.setItem("refreshToken", res.data.result.refreshToken);
+      set({ isRegistering: false, isAuthenticated: true });
+      toast.success(res.data.message);
+    } catch (error) {
+      set({ isRegistering: false, isAuthenticated: false });
+    }
   },
 
   login: async (body: LoginReqBody) => {
-    set({ isLoggingIn: true });
-    await loginApi(body);
-    set({
-      isLoggingIn: false,
-      isAuthenticated: true,
-    });
+    try {
+      set({ isLoggingIn: true, isAuthenticated: false });
+      const res = await axios.post(`${API_ROOT}/api/auth/login`, body);
+      localStorage.setItem("accessToken", res.data.result.accessToken);
+      localStorage.setItem("refreshToken", res.data.result.refreshToken);
+      set({ isLoggingIn: false, isAuthenticated: true });
+      toast.success(res.data.message);
+    } catch (error) {
+      set({ isLoggingIn: false, isAuthenticated: false });
+    }
   },
 
   logout: async () => {
-    set({ isLoggingOut: true });
-    await logoutApi();
-    set({
-      isAuthenticated: false,
-      isLoggingOut: false,
-    });
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
+      set({ isLoggingOut: true, isAuthenticated: false });
+      const res = await axios.post(
+        `${API_ROOT}/api/auth/logout`,
+        { refreshToken },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      toast.success(res.data.message);
+      set({ isLoggingOut: false, isAuthenticated: false });
+    } catch (error) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      window.location.reload();
+      set({ isLoggingOut: false, isAuthenticated: false });
+    }
   },
 }));

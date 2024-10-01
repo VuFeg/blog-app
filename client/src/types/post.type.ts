@@ -1,5 +1,3 @@
-import { User } from "./user.type";
-
 export type MediaType = {
   url: string;
   type: Media;

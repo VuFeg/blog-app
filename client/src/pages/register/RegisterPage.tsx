@@ -1,23 +1,34 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { registerSchema, RegisterSchema } from "../../schema/auth.schema";
+import { LoginRegisterSkeleton } from "../../components/skeleton/LoginRegisterSkeleton";
 
 export const RegisterPage = () => {
-  const navigate = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterSchema>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: "",
+      username: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { register: registerUser, isRegistering } = useAuthStore();
 
-  const { register } = useAuthStore();
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password === confirmPassword)
-      await register({ username, email, password, name: username });
-    navigate("/login");
+  const handleRegister = async (data: RegisterSchema) => {
+    await registerUser({ ...data, name: data.username });
   };
+
+  if (isRegistering) {
+    return <LoginRegisterSkeleton />;
+  }
 
   return (
     <section className="bg-gray-50">
@@ -27,26 +38,34 @@ export const RegisterPage = () => {
             <h1 className="text-xl font-bold text-gray-900 md:text-2xl ">
               Đăng ký
             </h1>
-            <form className="space-y-4" action="#" onSubmit={handleSignUp}>
+            <form
+              className="space-y-4"
+              noValidate
+              onSubmit={handleSubmit(handleRegister)}
+            >
               <div>
                 <label className="block mb-2 text-sm font-medium ">
                   Tên tài khoản
                 </label>
                 <input
-                  onChange={(e) => setUsername(e.target.value)}
+                  {...register("username")}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                   placeholder="ntqn293"
-                  required
                 />
+                {errors.username && (
+                  <p className="text-red-500">{errors.username.message}</p>
+                )}
               </div>
               <div>
                 <label className="block mb-2 text-sm font-medium ">Email</label>
                 <input
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email")}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                   placeholder="ntqn293@gmail.com"
-                  required
                 />
+                {errors.email && (
+                  <p className="text-red-500">{errors.email.message}</p>
+                )}
               </div>
               <div>
                 <label
@@ -56,12 +75,14 @@ export const RegisterPage = () => {
                   Mật khẩu
                 </label>
                 <input
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register("password")}
                   type="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                  required
                 />
+                {errors.password && (
+                  <p className="text-red-500">{errors.password.message}</p>
+                )}
               </div>
               <div>
                 <label
@@ -71,12 +92,16 @@ export const RegisterPage = () => {
                   Nhập lại mật khẩu
                 </label>
                 <input
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  {...register("confirmPassword")}
                   type="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                  required
                 />
+                {errors.confirmPassword && (
+                  <p className="text-red-500">
+                    {errors.confirmPassword.message}
+                  </p>
+                )}
               </div>
               <div className="flex items-start">
                 <div className="flex items-center h-5">

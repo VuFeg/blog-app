@@ -1,18 +1,32 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginSchema } from "../../schema/auth.schema";
+import { LoginRegisterSkeleton } from "../../components/skeleton/LoginRegisterSkeleton";
 
 export const LoginPage = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const { login } = useAuthStore();
+  const { login, isLoggingIn } = useAuthStore();
 
-  const handleLogIn = async (e: any) => {
-    e.preventDefault();
-
-    await login({ email, password });
+  const handleLogIn = async (data: LoginSchema) => {
+    await login(data);
   };
+
+  if (isLoggingIn) {
+    return <LoginRegisterSkeleton />;
+  }
 
   return (
     <section className="bg-gray-50">
@@ -24,19 +38,20 @@ export const LoginPage = () => {
             </h1>
             <form
               className="space-y-4 md:space-y-6"
-              onSubmit={handleLogIn}
+              onSubmit={handleSubmit(handleLogIn)}
               noValidate
             >
               <div>
                 <label className="block mb-2 text-sm font-medium ">Email</label>
                 <input
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
+                  {...register("email")}
                   type="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                   placeholder="name@company.com"
-                  required
                 />
+                {errors.email && (
+                  <p className="text-red-500">{errors.email.message}</p>
+                )}
               </div>
               <div>
                 <label
@@ -46,13 +61,14 @@ export const LoginPage = () => {
                   Mật khẩu
                 </label>
                 <input
-                  onChange={(e) => setPassword(e.target.value)}
-                  value={password}
+                  {...register("password")}
                   type="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                  required
                 />
+                {errors.password && (
+                  <p className="text-red-500">{errors.password.message}</p>
+                )}
               </div>
               <div className="flex items-center justify-between">
                 <div className="flex items-start">

@@ -9,13 +9,11 @@ interface MainLayoutProps {
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const accessToken = localStorage.getItem("accessToken");
   const refreshToken = localStorage.getItem("refreshToken");
-  useEffect(() => {
-    if (accessToken && refreshToken) {
-      useAuthStore.setState({ isAuthenticated: true });
-    } else {
-      useAuthStore.setState({ isAuthenticated: false });
-    }
-  }, [accessToken, refreshToken]);
+  if (accessToken && refreshToken) {
+    useAuthStore.setState({ isAuthenticated: true });
+  } else {
+    useAuthStore.setState({ isAuthenticated: false });
+  }
 
   const { getMe } = useUsersStore();
 

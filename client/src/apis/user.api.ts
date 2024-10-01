@@ -54,3 +54,14 @@ export const searchUserApi = async (keyword: string) => {
 
   return res.data.result;
 };
+
+export const updateProfileApi = async (data: any) => {
+  const accessToken = localStorage.getItem("accessToken");
+  const res = await authorizedAxiosInstance.put(`${API_ROOT}/api/users`, data, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return res.data.result;
+};

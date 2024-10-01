@@ -1,4 +1,3 @@
-import avatar from "../../assets/images/avatar.png";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Avatar, Menu, MenuItem } from "@mui/material";
@@ -12,38 +11,47 @@ import {
 } from "@heroicons/react/24/outline";
 import { PostType } from "../../types/post.type";
 import { useUsersStore } from "../../store/usersStore";
-import { deletePostApi, unLikeAndLikePostApi } from "../../apis/post.api";
 import { usePostStore } from "../../store/postStore";
 import { useState } from "react";
+import { PostSkeleton } from "../skeleton/PostSkeleton";
 
 interface PostProps {
   listPosts: PostType[];
 }
 
 export const Post = ({ listPosts }: PostProps) => {
+  const [currentPost, setCurrentPost] = useState<PostType | null>(null);
   const { user } = useUsersStore();
-  const { getNewFeeds } = usePostStore();
+  const { getNewFeeds, isGettingNewFeeds, deletePost, likePost } =
+    usePostStore();
 
   const handleLike = async (post: PostType) => {
-    await unLikeAndLikePostApi(post._id);
-    await getNewFeeds();
+    await likePost(post._id);
+    listPosts = await getNewFeeds();
   };
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    post: PostType
+  ) => {
     setAnchorEl(event.currentTarget);
+    setCurrentPost(post);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
   const handleDelete = async (post: PostType) => {
     setAnchorEl(null);
-    await deletePostApi(post._id);
-    await getNewFeeds();
+    await deletePost(post._id);
+    listPosts = await getNewFeeds();
+    setCurrentPost(null);
   };
+
   return (
     <>
+      {isGettingNewFeeds ? <PostSkeleton /> : null}
       {listPosts?.map((post) => (
         <div
           key={post._id}
@@ -54,7 +62,7 @@ export const Post = ({ listPosts }: PostProps) => {
               <div className="p-1 rounded-full border cursor-pointer mt-2">
                 <Avatar
                   alt={post.user?.username}
-                  src={avatar}
+                  src={post.user?.avatar}
                   sx={{ width: 32, height: 32 }}
                 />
               </div>
@@ -81,7 +89,7 @@ export const Post = ({ listPosts }: PostProps) => {
                   aria-haspopup="true"
                   aria-expanded={open ? "true" : undefined}
                   className="rounded-full p-1 hover:bg-gray-300/40"
-                  onClick={handleClick}
+                  onClick={(e) => handleClick(e, post)}
                 >
                   <EllipsisHorizontalIcon className="size-5" />
                 </button>
@@ -96,9 +104,13 @@ export const Post = ({ listPosts }: PostProps) => {
                 >
                   <MenuItem
                     sx={{ marginRight: 1, marginLeft: 1 }}
-                    onClick={() => handleDelete(post)}
+                    disabled={currentPost?.user._id !== user._id}
                   >
-                    Xóa bài
+                    <button
+                      onClick={() => currentPost && handleDelete(currentPost)}
+                    >
+                      Xóa bài
+                    </button>
                   </MenuItem>
                 </Menu>
               </div>

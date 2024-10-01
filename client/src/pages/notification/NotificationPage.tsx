@@ -1,26 +1,27 @@
 import { Avatar } from "@mui/material";
-import { useEffect, useState } from "react";
-import {
-  NotificationsType,
-  NotificationType,
-} from "../../types/notification.type";
-import { getNotificationsApi } from "../../apis/notification.api";
+import { useEffect } from "react";
+import { NotificationType } from "../../types/notification.type";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
+import { useNotificationStore } from "../../store/notificationStore";
+import { NotificationSkeleton } from "../../components/skeleton/NotificationSkeleton";
 
 export const NotificationPage = () => {
-  const [notifications, setNotifications] = useState<NotificationsType[]>([]);
+  const { getNotifications, gettingNotifications, notifications } =
+    useNotificationStore();
+
   useEffect(() => {
     const fetchNotifications = async () => {
-      const data = await getNotificationsApi();
-      setNotifications(data);
+      await getNotifications();
     };
 
     fetchNotifications();
   }, []);
+
   return (
     <>
       <div className="max-w-2xl mx-auto bg-white border rounded-t-3xl shadow-lg min-h-screen">
+        {gettingNotifications ? <NotificationSkeleton /> : null}
         {notifications?.map((notification) => (
           <div
             key={notification._id}
