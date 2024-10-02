@@ -3,7 +3,6 @@ import { Toaster } from "react-hot-toast";
 import HomePage from "./pages/home/HomePage";
 import { Profilepage } from "./pages/profile/ProfilePage";
 import { PostRepCmt } from "./components/PostRepCmt";
-import FixHome from "./components/FixHome";
 import { usePostStore } from "./store/postStore";
 import { CircularProgress } from "@mui/material";
 import { SearchPage } from "./pages/search/SearchPage";
@@ -54,7 +53,6 @@ const App = () => {
             </PrivateLayout>
           }
         />
-        <Route path="/profile/fix-home" element={<FixHome />} />
         <Route
           path="/login"
           element={isAuthenticated ? <Navigate to={"/"} /> : <LoginPage />}

@@ -1,10 +1,12 @@
 import { useState } from "react";
-import avatar from "../../assets/images/avatar.png";
 import Avatar from "@mui/material/Avatar";
 import { ShowCreatePost } from "./ShowCreatePost";
+import { useUsersStore } from "../../store/usersStore";
 
 export const NewPost = () => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const { user } = useUsersStore();
 
   return (
     <>
@@ -12,7 +14,7 @@ export const NewPost = () => {
         <div className="p-1 rounded-full border cursor-pointer">
           <Avatar
             alt="Remy Sharp"
-            src={avatar}
+            src={user.avatar || "/avatar.png"}
             sx={{ width: 32, height: 32 }}
           />
         </div>

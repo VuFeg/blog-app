@@ -1,24 +1,18 @@
 import { Avatar } from "@mui/material";
-import avatar from "../../assets/images/avatar.png";
 import { useUsersStore } from "../../store/usersStore";
 import { useEffect, useState } from "react";
 import { User } from "../../types/user.type";
-import {
-  followUserApi,
-  getUserSuggestsApi,
-  searchUserApi,
-} from "../../apis/user.api";
 
 export const SearchPage = () => {
   const [userSuggests, setUserSuggests] = useState<User[]>([]);
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [search, setSearch] = useState("");
 
-  const { user } = useUsersStore();
-  console.log(user);
+  const { user, getUserSuggests, searchUser, followUser } = useUsersStore();
+
   useEffect(() => {
     const fetchUserSuggests = async () => {
-      const data = await getUserSuggestsApi();
+      const data = await getUserSuggests();
 
       setUserSuggests(data);
     };
@@ -26,10 +20,10 @@ export const SearchPage = () => {
     fetchUserSuggests();
   }, []);
   const handleFollow = async (user: User) => {
-    await followUserApi(user._id);
+    await followUser(user._id);
   };
   const handleSearch = async () => {
-    const data = await searchUserApi(search);
+    const data = await searchUser(search);
     setSearchResults(data);
   };
 
@@ -73,7 +67,10 @@ export const SearchPage = () => {
         {searchResults.length === 0
           ? userSuggests?.map((userSuggest) => (
               <div key={userSuggest._id} className="flex gap-5 pl-5 pt-6">
-                <Avatar src={avatar} className="mt-2" />
+                <Avatar
+                  src={userSuggest.avatar || "/avatar.png"}
+                  className="mt-2"
+                />
                 <div className=" flex flex-col flex-1 border-b pb-2 pr-5">
                   <div className="flex justify-between items-center">
                     <div>
@@ -108,7 +105,10 @@ export const SearchPage = () => {
             ))
           : searchResults?.map((userSearch) => (
               <div key={userSearch._id} className="flex gap-5 pl-5 pt-6">
-                <Avatar src={avatar} className="mt-2" />
+                <Avatar
+                  src={userSearch.avatar || "/avatar.png"}
+                  className="mt-2"
+                />
                 <div className=" flex flex-col flex-1 border-b pb-2 pr-5">
                   <div className="flex justify-between items-center">
                     <div>

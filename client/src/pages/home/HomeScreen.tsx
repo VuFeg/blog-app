@@ -5,19 +5,17 @@ import { usePostStore } from "../../store/postStore";
 import { PostType } from "../../types/post.type";
 
 export const HomeScreen = () => {
-  const { getNewFeeds, posts } = usePostStore();
+  const { getNewFeeds } = usePostStore();
   const [listPosts, setListPosts] = useState<PostType[]>([]);
+
   useEffect(() => {
     const handleGetNewFees = async () => {
-      await getNewFeeds();
+      const posts = await getNewFeeds();
+      setListPosts(posts);
     };
 
     handleGetNewFees();
   }, []);
-
-  useEffect(() => {
-    setListPosts(posts);
-  }, [posts]);
 
   return (
     <div className="max-w-2xl mx-auto my-4">

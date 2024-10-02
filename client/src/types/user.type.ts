@@ -38,9 +38,10 @@ export type User = {
 };
 
 export type UpdateUserReqBody = {
-  name: string;
-  bio: string;
-  website: string;
-  gender: string;
-  day_of_birth: string;
+  name?: string;
+  bio?: string;
+  website?: string;
+  gender?: string;
+  day_of_birth?: string;
+  avatar?: string;
 };

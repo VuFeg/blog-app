@@ -1,9 +1,7 @@
 import { Avatar } from "@mui/material";
-import avatar from "../../assets/images/avatar.png";
 import { useUsersStore } from "../../store/usersStore";
 import { useEffect, useRef, useState } from "react";
 import { usePostStore } from "../../store/postStore";
-import { uploadMediaApi } from "../../apis/media.api";
 import { Hash, Image, MenuIcon } from "lucide-react";
 interface ShowCreatePostProps {
   isOpen: boolean;
@@ -15,9 +13,9 @@ export const ShowCreatePost = ({ isOpen, setIsOpen }: ShowCreatePostProps) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const [value, setValue] = useState("");
-  const { createPost, getNewFeeds } = usePostStore();
+  const { createPost, getNewFeeds, uploadMedia } = usePostStore();
   const handleCreatePost = async () => {
-    const data = await uploadMediaApi(file as File);
+    const data = await uploadMedia(file as File);
 
     await createPost({
       captions: value,
@@ -68,7 +66,7 @@ export const ShowCreatePost = ({ isOpen, setIsOpen }: ShowCreatePostProps) => {
                     <div className="p-1 rounded-full border cursor-pointer mt-2">
                       <Avatar
                         alt="Remy Sharp"
-                        src={avatar}
+                        src={user.avatar || "/avatar.png"}
                         sx={{ width: 32, height: 32 }}
                       />
                     </div>

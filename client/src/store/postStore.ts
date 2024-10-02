@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { CreatePostBodyReq, PostType } from "../types/post.type";
+import { CreatePostBodyReq, MediaType, PostType } from "../types/post.type";
 import axios from "axios";
 import { API_ROOT } from "../utils/constant";
 
@@ -14,6 +14,7 @@ interface PostStore {
   createPost: (post: CreatePostBodyReq) => Promise<void>;
   likePost: (post_id: string) => Promise<void>;
   deletePost: (post_id: string) => Promise<void>;
+  uploadMedia: (file: File) => Promise<MediaType[]>;
 }
 
 export const usePostStore = create<PostStore>((set) => ({
@@ -90,5 +91,24 @@ export const usePostStore = create<PostStore>((set) => ({
     } catch (error) {
       set({ deletingPost: false });
     }
+  },
+
+  uploadMedia: async (file: File) => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      const formData = new FormData();
+      formData.append("image", file as Blob);
+      const res = await axios.post(
+        `${API_ROOT}/api/medias/upload-image`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      return res.data.result;
+    } catch (error) {}
   },
 }));

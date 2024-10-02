@@ -27,7 +27,7 @@ export const NotificationPage = () => {
             key={notification._id}
             className="flex items-center gap-4 ml-4 mt-4"
           >
-            <Avatar src="https://mui.com/static/images/avatar/1.jpg" />
+            <Avatar src={notification.from.avatar || "/avatar.png"} />
             <div className="flex flex-1 justify-between items-center pr-4 pb-2 border-b border-black/30">
               <div>
                 <div className="flex items-center gap-2">

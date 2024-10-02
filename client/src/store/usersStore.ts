@@ -13,9 +13,11 @@ interface UsersStoreProps {
   searchingUser: boolean;
   updatingProfile: boolean;
   getMe: () => Promise<User>;
-  getUserSuggests: () => Promise<void>;
+  getUserSuggests: () => Promise<User[]>;
   followUser: (userId: string) => Promise<void>;
   searchUser: (keyword: string) => Promise<User[]>;
+  updateProfile: (data: UpdateUserReqBody) => Promise<void>;
+  uploadAvatar: (file: File) => Promise<string>;
 }
 
 export const useUsersStore = create<UsersStoreProps>((set) => ({
@@ -97,9 +99,26 @@ export const useUsersStore = create<UsersStoreProps>((set) => ({
       });
       toast.success(res.data.message);
       set({ updatingProfile: false, user: res.data.result });
-      return res.data.result;
     } catch (error) {
       set({ updatingProfile: false });
     }
+  },
+  uploadAvatar: async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      const accessToken = localStorage.getItem("accessToken");
+      const res = await axios.post(
+        `${API_ROOT}/api/medias/upload-avatar`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      set({ user: res.data.result });
+      return res.data.result;
+    } catch (error) {}
   },
 }));

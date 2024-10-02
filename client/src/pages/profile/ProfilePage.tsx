@@ -1,4 +1,3 @@
-import avatar from "../../assets/images/avatar.png";
 import { useEffect, useState } from "react";
 import {
   ArrowPathRoundedSquareIcon,
@@ -22,7 +21,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
-import { updateProfileApi } from "../../apis/user.api";
 import { User } from "../../types/user.type";
 import { useUsersStore } from "../../store/usersStore";
 
@@ -30,9 +28,9 @@ export const Profilepage = () => {
   const [user, setUser] = useState<User | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
-  const [sex, setSex] = useState("");
+  const [gender, setGender] = useState("");
   const [bio, setBio] = useState("");
-  const [link, setLink] = useState("");
+  const [website, setWebsite] = useState("");
   const [name, setName] = useState("");
   const [value, setValue] = useState<Dayjs | null>(null);
 
@@ -42,17 +40,32 @@ export const Profilepage = () => {
   const label = { inputProps: { "aria-label": "Switch demo" } };
 
   const handleUpdateProfile = async () => {
-    await updateProfileApi({
+    if (file) {
+      const data = await uploadAvatar(file as File);
+      await updateProfile({
+        name,
+        bio,
+        website,
+        gender,
+        day_of_birth: formatDate(value),
+        avatar: data,
+      });
+      window.location.reload();
+      return;
+    }
+
+    await updateProfile({
       name,
       bio,
-      website: link,
-      gender: sex,
+      website,
+      gender,
       day_of_birth: formatDate(value),
     });
+
     window.location.reload();
   };
 
-  const { getMe } = useUsersStore();
+  const { getMe, updateProfile, uploadAvatar } = useUsersStore();
 
   useEffect(() => {
     const checkMe = async () => {
@@ -61,6 +74,20 @@ export const Profilepage = () => {
     };
     checkMe();
   }, []);
+
+  const [file, setFile] = useState<File | null>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      setFile(file);
+    }
+  };
+
+  const handleFileUploadClick = () => {
+    document.getElementById("fileInput")?.click();
+  };
 
   return (
     <div className="bg-white max-w-2xl rounded-t-3xl border shadow-lg min-h-screen mx-auto">
@@ -72,8 +99,8 @@ export const Profilepage = () => {
               <p className="text-base ml-4">{user?.username}</p>
             </div>
             <img
-              src={avatar}
-              alt=""
+              src={user?.avatar || "/avatar.png"}
+              alt={user?.username}
               className="w-16 h-16 object-cover rounded-full mt-7 mr-4"
             />
           </div>
@@ -117,7 +144,11 @@ export const Profilepage = () => {
         <div className="flex flex-col justify-center gap-4 p-4">
           <div className="flex gap-4 mx-2">
             <div className="cursor-pointer mt-2">
-              <Avatar src={avatar} alt="" className="w-6" />
+              <Avatar
+                src={user?.avatar || "/avatar.png"}
+                alt={user?.username}
+                className="w-6"
+              />
             </div>
             <div className="flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-2">
@@ -161,7 +192,10 @@ export const Profilepage = () => {
         <>
           <div
             className="bg-[#4b4b4b] fixed top-0 left-0 right-0 bottom-0 z-20 opacity-40"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen);
+              setName(user?.name || "");
+            }}
           ></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 max-w-xl w-full ">
             <div className="max-w-xl">
@@ -178,18 +212,33 @@ export const Profilepage = () => {
                           <Input
                             id="component-simple"
                             defaultValue={user?.name}
-                            placeholder="+ Viết họ tên"
                             className="opacity-45"
                             onChange={(e) => setName(e.target.value)}
                           />
                         </FormControl>
                       </div>
                     </div>
-                    <Avatar
-                      alt="Remy Sharp"
-                      src={avatar}
-                      sx={{ width: 56, height: 56 }}
-                    />
+                    <div onClick={handleFileUploadClick}>
+                      <input
+                        id="fileInput"
+                        type="file"
+                        className="hidden"
+                        onChange={handleFileChange}
+                      />
+                      {file ? (
+                        <Avatar
+                          alt={user?.username}
+                          src={URL.createObjectURL(file)}
+                          sx={{ width: 56, height: 56 }}
+                        />
+                      ) : (
+                        <Avatar
+                          alt={user?.username}
+                          src={user?.avatar}
+                          sx={{ width: 56, height: 56 }}
+                        />
+                      )}
+                    </div>
                   </div>
                   <div className="flex">
                     <div className="flex flex-1 flex-col ml-4 mr-4 pb-2">
@@ -212,7 +261,7 @@ export const Profilepage = () => {
                           id="component-simple"
                           placeholder="+ Viết liên kết"
                           className="opacity-45"
-                          onChange={(e) => setLink(e.target.value)}
+                          onChange={(e) => setWebsite(e.target.value)}
                         />
                       </FormControl>
                     </div>
@@ -238,9 +287,9 @@ export const Profilepage = () => {
                         <Select
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
-                          value={sex}
+                          value={gender}
                           label="gioi tinh"
-                          onChange={(e) => setSex(e.target.value as string)}
+                          onChange={(e) => setGender(e.target.value as string)}
                         >
                           <MenuItem value={"male"}>Nam</MenuItem>
                           <MenuItem value={"female"}>Nữ</MenuItem>

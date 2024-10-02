@@ -22,7 +22,7 @@ interface PostProps {
 export const Post = ({ listPosts }: PostProps) => {
   const [currentPost, setCurrentPost] = useState<PostType | null>(null);
   const { user } = useUsersStore();
-  const { getNewFeeds, isGettingNewFeeds, deletePost, likePost } =
+  const { getNewFeeds, isGettingNewFeeds, deletePost, deletingPost, likePost } =
     usePostStore();
 
   const handleLike = async (post: PostType) => {
@@ -104,7 +104,9 @@ export const Post = ({ listPosts }: PostProps) => {
                 >
                   <MenuItem
                     sx={{ marginRight: 1, marginLeft: 1 }}
-                    disabled={currentPost?.user._id !== user._id}
+                    disabled={
+                      currentPost?.user._id !== user._id || deletingPost
+                    }
                   >
                     <button
                       onClick={() => currentPost && handleDelete(currentPost)}

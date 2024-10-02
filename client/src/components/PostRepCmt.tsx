@@ -1,6 +1,10 @@
-import avatar from "../assets/images/avatar.png";
-import { HeartIcon } from 'lucide-react';
-import { ArrowPathRoundedSquareIcon, ChatBubbleLeftIcon, EllipsisHorizontalIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { HeartIcon } from "lucide-react";
+import {
+  ArrowPathRoundedSquareIcon,
+  ChatBubbleLeftIcon,
+  EllipsisHorizontalIcon,
+  PaperAirplaneIcon,
+} from "@heroicons/react/24/outline";
 export const PostRepCmt = () => {
   return (
     <div className="h-screen flex flex-col justify-center items-center ">
@@ -11,7 +15,7 @@ export const PostRepCmt = () => {
         <div className="bg-white rounded-3xl border shadow-lg">
           <div className="flex flex-1 gap-5 p-4 border-b">
             <div>
-              <img src={avatar} alt="" className="w-6" />
+              <img src={"/avatar.png"} alt="" className="w-6" />
             </div>
             <div className="flex flex-1 flex-col gap-3">
               <div className="flex flex-1 justify-between font-bold">
@@ -20,7 +24,7 @@ export const PostRepCmt = () => {
                   <span className=" ml-3 opacity-15 font-normal">18 giờ</span>
                 </div>
                 <button className="hover:rounded-full p-2 hover:bg-gray-300 ...">
-                <EllipsisHorizontalIcon className="size-5" />
+                  <EllipsisHorizontalIcon className="size-5" />
                 </button>
               </div>
               <div>
@@ -31,7 +35,7 @@ export const PostRepCmt = () => {
           </div>
           <div className="flex flex-1 gap-5 p-4 border-b">
             <div>
-              <img src={avatar} alt="" className="w-6" />
+              <img src={"/avatar.png"} alt="" className="w-6" />
             </div>
             <div className="flex flex-1 flex-col gap-3">
               <div className="flex flex-1 justify-between font-bold">
@@ -39,7 +43,7 @@ export const PostRepCmt = () => {
                 <p>
                   {" "}
                   <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                  <EllipsisHorizontalIcon className="size-5" />
+                    <EllipsisHorizontalIcon className="size-5" />
                   </button>
                 </p>
               </div>
@@ -51,19 +55,19 @@ export const PostRepCmt = () => {
                 />
               </div>
               <div className="flex gap-4 mt-2">
-                  <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
-                    <HeartIcon className="size-5" />
-                  </button>
-                  <button className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50">
-                    <ChatBubbleLeftIcon className="size-5" />
-                  </button>
-                  <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
-                    <ArrowPathRoundedSquareIcon className="size-5" />
-                  </button>
-                  <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
-                    <PaperAirplaneIcon className="size-5" />
-                  </button>
-                </div>
+                <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
+                  <HeartIcon className="size-5" />
+                </button>
+                <button className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50">
+                  <ChatBubbleLeftIcon className="size-5" />
+                </button>
+                <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
+                  <ArrowPathRoundedSquareIcon className="size-5" />
+                </button>
+                <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
+                  <PaperAirplaneIcon className="size-5" />
+                </button>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-5 p-4 mb-4 border-b cursor-pointer justify-between">
