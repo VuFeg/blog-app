@@ -15,7 +15,7 @@ export const Header = () => {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 md:hidden block py-1 px-4 z-10">
+      <div className="fixed top-0 left-0 right-0 bg-white md:bg-transparent md:hidden block py-1 px-4 z-10">
         <div className="flex justify-between items-center">
           <div></div>
           <Link to={"/"}>
@@ -29,7 +29,7 @@ export const Header = () => {
           </Button>
         </div>
       </div>
-      <div className="fixed md:top-0 left-0 bottom-0 md:py-4 z-10 md:mx-1">
+      <div className="fixed md:top-0 left-0 bottom-0 w-full bg-white md:bg-transparent md:w-16 md:py-4 z-10 md:mx-1">
         <div className="flex md:flex-col md:justify-between md:h-full items-center">
           <Link to={"/"} className="md:block hidden">
             <img src="/logo.png" alt="" className="cursor-pointer" />

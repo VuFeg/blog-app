@@ -2,13 +2,14 @@ import { Avatar } from "@mui/material";
 import { useUsersStore } from "../../store/usersStore";
 import { useEffect, useState } from "react";
 import { User } from "../../types/user.type";
+import { SearchSkeleton } from "../../components/skeleton/SearchSkeleton";
 
 export const SearchPage = () => {
   const [userSuggests, setUserSuggests] = useState<User[]>([]);
   const [searchResults, setSearchResults] = useState<User[]>([]);
   const [search, setSearch] = useState("");
 
-  const { user, getUserSuggests, searchUser, followUser } = useUsersStore();
+  const { user, getUserSuggests, searchUser, followUser, gettingUserSuggests, searchingUser } = useUsersStore();
 
   useEffect(() => {
     const fetchUserSuggests = async () => {
@@ -28,7 +29,7 @@ export const SearchPage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-t-3xl border shadow-lg min-h-screen">
+    <div className="max-w-2xl mx-auto bg-white rounded-t-3xl border shadow-lg min-h-screen mt-24 md:mt-8">
       <div className="flex flex-col justify-center">
         <div className="p-6 rounded-lg">
           <div className="relative">
@@ -64,6 +65,8 @@ export const SearchPage = () => {
         <div className="ml-6 opacity-30">
           <b>Gợi ý theo dõi</b>
         </div>
+        {gettingUserSuggests && (<SearchSkeleton/>)}
+        {searchingUser && (<SearchSkeleton/>)}
         {searchResults.length === 0
           ? userSuggests?.map((userSuggest) => (
               <div key={userSuggest._id} className="flex gap-5 pl-5 pt-6">

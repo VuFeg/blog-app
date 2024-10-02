@@ -20,7 +20,7 @@ export const NotificationPage = () => {
 
   return (
     <>
-      <div className="max-w-2xl mx-auto bg-white border rounded-t-3xl shadow-lg min-h-screen">
+      <div className="max-w-2xl mx-auto bg-white border rounded-t-3xl shadow-lg min-h-screen mt-24 md:mt-8">
         {gettingNotifications ? <NotificationSkeleton /> : null}
         {notifications?.map((notification) => (
           <div

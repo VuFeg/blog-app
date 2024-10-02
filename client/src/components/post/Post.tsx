@@ -14,6 +14,7 @@ import { useUsersStore } from "../../store/usersStore";
 import { usePostStore } from "../../store/postStore";
 import { useEffect, useState } from "react";
 import { PostSkeleton } from "../skeleton/PostSkeleton";
+import { CreatePostSkeleton } from "../skeleton/CreatePostSkeleton";
 
 export const Post = () => {
   useEffect(() => {
@@ -29,7 +30,7 @@ export const Post = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
 
   const { user } = useUsersStore();
-  const { getNewFeeds, isGettingNewFeeds, deletePost, deletingPost, likePost } =
+  const { getNewFeeds, isGettingNewFeeds, deletePost, deletingPost, likePost, isCreatingPost } =
     usePostStore();
 
   const handleLike = async (post: PostType) => {
@@ -60,7 +61,8 @@ export const Post = () => {
 
   return (
     <>
-      {isGettingNewFeeds ? <PostSkeleton /> : null}
+      {isGettingNewFeeds && <PostSkeleton />}
+      {isCreatingPost && <CreatePostSkeleton/>}
       {posts?.map((post) => (
         <div
           key={post._id}
