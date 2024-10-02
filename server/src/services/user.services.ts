@@ -108,9 +108,19 @@ class UserServices {
     return followings
   }
   async updateUserProfile(user_id: string, body: UpdateUserProfileBodyReq) {
+    const user = await database.users.findOne({ _id: new ObjectId(user_id) })
     const result = await database.users.findOneAndUpdate(
       { _id: new ObjectId(user_id) },
-      { $set: body },
+      {
+        $set: {
+          name: body.name || user?.name,
+          bio: body.bio || user?.bio,
+          website: body.website || user?.website,
+          avatar: body.avatar || user?.avatar,
+          day_of_birth: body.day_of_birth || user?.day_of_birth,
+          gender: body.gender || user?.gender
+        }
+      },
       { returnDocument: 'after' }
     )
 

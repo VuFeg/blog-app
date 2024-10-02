@@ -1,4 +1,3 @@
-import { Request } from 'express'
 import { checkSchema } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { HTTP_STATUS_CODE } from '~/constants/httpStatusCode'
@@ -51,57 +50,19 @@ export const followValidator = validate(
 export const updateUserProfileValidator = validate(
   checkSchema(
     {
-      name: {
-        trim: true,
-        notEmpty: {
-          errorMessage: USER_MESSAGES.NAME_IS_REQUIRED
-        },
-        isLength: {
-          errorMessage: USER_MESSAGES.NAME_LENGTH_MUST_BE_FROM_1_TO_100,
-          options: { min: 1, max: 100 }
-        }
-      },
-      bio: {
-        trim: true,
-        isLength: {
-          errorMessage: USER_MESSAGES.BIO_LENGTH,
-          options: { min: 0, max: 200 }
-        }
-      },
-      website: {
-        trim: true,
-        isLength: {
-          errorMessage: USER_MESSAGES.WEBSITE_LENGTH,
-          options: { min: 0, max: 200 }
-        },
-        isURL: {
-          errorMessage: 'Invalid URL'
-        }
-      },
       day_of_birth: {
-        isDate: {
-          errorMessage: 'Invalid date'
-        },
         custom: {
           options: (value) => {
+            if (value && !new Date(value)) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS_CODE.BAD_REQUEST,
+                message: 'Invalid date of birth'
+              })
+            }
             if (new Date(value) > new Date()) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS_CODE.BAD_REQUEST,
                 message: 'Date of birth must be less than or equal to the current date'
-              })
-            }
-            return true
-          }
-        }
-      },
-      gender: {
-        trim: true,
-        custom: {
-          options: (value: string) => {
-            if (!['male', 'female', 'other'].includes(value.toLowerCase())) {
-              throw new ErrorWithStatus({
-                status: HTTP_STATUS_CODE.BAD_REQUEST,
-                message: 'Invalid gender'
               })
             }
             return true

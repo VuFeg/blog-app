@@ -7,7 +7,7 @@ export interface UserProfileParams {
 }
 
 export interface UpdateUserProfileBodyReq {
-  name: string
+  name?: string
   bio?: string
   avatar?: string
   website?: string
