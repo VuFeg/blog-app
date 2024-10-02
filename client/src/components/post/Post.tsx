@@ -12,22 +12,30 @@ import {
 import { PostType } from "../../types/post.type";
 import { useUsersStore } from "../../store/usersStore";
 import { usePostStore } from "../../store/postStore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PostSkeleton } from "../skeleton/PostSkeleton";
 
-interface PostProps {
-  listPosts: PostType[];
-}
+export const Post = () => {
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const data = await getNewFeeds();
+      setPosts(data);
+    };
 
-export const Post = ({ listPosts }: PostProps) => {
+    fetchPosts();
+  }, []);
+
   const [currentPost, setCurrentPost] = useState<PostType | null>(null);
+  const [posts, setPosts] = useState<PostType[]>([]);
+
   const { user } = useUsersStore();
   const { getNewFeeds, isGettingNewFeeds, deletePost, deletingPost, likePost } =
     usePostStore();
 
   const handleLike = async (post: PostType) => {
     await likePost(post._id);
-    listPosts = await getNewFeeds();
+    const data = await getNewFeeds();
+    setPosts(data);
   };
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -45,14 +53,15 @@ export const Post = ({ listPosts }: PostProps) => {
   const handleDelete = async (post: PostType) => {
     setAnchorEl(null);
     await deletePost(post._id);
-    listPosts = await getNewFeeds();
+    const data = await getNewFeeds();
+    setPosts(data);
     setCurrentPost(null);
   };
 
   return (
     <>
       {isGettingNewFeeds ? <PostSkeleton /> : null}
-      {listPosts?.map((post) => (
+      {posts?.map((post) => (
         <div
           key={post._id}
           className="flex flex-col justify-center border bg-white rounded-xl shadow-lg mt-8 py-6"
