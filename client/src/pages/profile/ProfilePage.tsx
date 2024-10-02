@@ -23,6 +23,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dayjs } from "dayjs";
 import { User } from "../../types/user.type";
 import { useUsersStore } from "../../store/usersStore";
+import { Clipboard } from "lucide-react";
 
 export const Profilepage = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -90,7 +91,7 @@ export const Profilepage = () => {
   };
 
   return (
-    <div className="bg-white max-w-2xl rounded-t-3xl border shadow-lg min-h-screen mx-auto">
+    <div className="bg-white max-w-2xl rounded-t-3xl border shadow-lg min-h-screen mx-auto mt-24 md:mt-8">
       <div className="flex flex-col">
         <div className="p-4 mb-4 ">
           <div className="flex items-center justify-between mb-4">
@@ -104,12 +105,13 @@ export const Profilepage = () => {
               className="w-16 h-16 object-cover rounded-full mt-7 mr-4"
             />
           </div>
-          <div className="flex justify-between items-center">
-            <span className="ml-4 opacity-45">
+          <div className="flex justify-between items-center mx-4">
+            <span className="opacity-45">
               {user?.followers?.length} người theo dõi
             </span>
-            Icon
+            <Clipboard/>
           </div>
+          <div className="ml-4">{user?.bio}</div>
         </div>
         <div className="p-4 mb-4">
           <button
