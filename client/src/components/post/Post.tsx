@@ -30,8 +30,14 @@ export const Post = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
 
   const { user } = useUsersStore();
-  const { getNewFeeds, isGettingNewFeeds, deletePost, deletingPost, likePost, isCreatingPost } =
-    usePostStore();
+  const {
+    getNewFeeds,
+    isGettingNewFeeds,
+    deletePost,
+    deletingPost,
+    likePost,
+    isCreatingPost,
+  } = usePostStore();
 
   const handleLike = async (post: PostType) => {
     await likePost(post._id);
@@ -62,7 +68,7 @@ export const Post = () => {
   return (
     <>
       {isGettingNewFeeds && <PostSkeleton />}
-      {isCreatingPost && <CreatePostSkeleton/>}
+      {isCreatingPost && <CreatePostSkeleton />}
       {posts?.map((post) => (
         <div
           key={post._id}
@@ -81,12 +87,22 @@ export const Post = () => {
             <div className="flex flex-1 flex-col gap-2">
               <div className="flex justify-between items-center font-bold">
                 <div className="flex gap-2">
-                  <Link
-                    to={`/profile/${post.user?.username}`}
-                    className="cursor-pointer text-md font-semibold"
-                  >
-                    {post.user?.username}
-                  </Link>
+                  {post.user?.username === user?.username ? (
+                    <Link
+                      to={`/profile`}
+                      className="cursor-pointer text-md font-semibold"
+                    >
+                      {post.user?.username}
+                    </Link>
+                  ) : (
+                    <Link
+                      to={`/${post.user?.username}`}
+                      className="cursor-pointer text-md font-semibold"
+                    >
+                      {post.user?.username}
+                    </Link>
+                  )}
+
                   <span className="opacity-15 font-normal">
                     {formatDistanceToNow(new Date(post.created_at ?? ""), {
                       addSuffix: true,
@@ -127,7 +143,10 @@ export const Post = () => {
                   </MenuItem>
                 </Menu>
               </div>
-              <div className="text-md font-normal mr-6">
+              <Link
+                to={`/${post.user.username}/post/${post._id}`}
+                className="text-md font-normal mr-6"
+              >
                 {post.captions
                   ?.split("\n")
                   .map((text: string, index: number) => (
@@ -136,16 +155,17 @@ export const Post = () => {
                       <br />
                     </span>
                   ))}
-              </div>
+                <div className="mt-4">
+                  <img
+                    className="h-72 w-full rounded-lg object-cover object-center"
+                    src={post?.medias[0]?.url}
+                    alt="nature image"
+                  />
+                </div>
+              </Link>
             </div>
           </div>
-          <div className="mt-4 mx-16">
-            <img
-              className="h-72 w-full rounded-lg object-cover object-center"
-              src={post?.medias[0]?.url}
-              alt="nature image"
-            />
-          </div>
+
           <div className="flex gap-4 ml-12 md:ml-16 items-center mt-4">
             <button
               className="rounded-full p-1 hover:scale-125 flex items-center gap-1"
@@ -160,7 +180,6 @@ export const Post = () => {
             </button>
             <button className="flex items-center gap-1 rounded-full p-1 hover:scale-125">
               <ChatBubbleLeftIcon className="size-5" />
-              <span>{post?.comments?.length || ""}</span>
             </button>
             <button className="rounded-full p-1 hover:scale-125">
               <ArrowPathRoundedSquareIcon className="size-5" />

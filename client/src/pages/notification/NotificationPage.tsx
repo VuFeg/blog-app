@@ -5,10 +5,13 @@ import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useNotificationStore } from "../../store/notificationStore";
 import { NotificationSkeleton } from "../../components/skeleton/NotificationSkeleton";
+import { useUsersStore } from "../../store/usersStore";
 
 export const NotificationPage = () => {
   const { getNotifications, gettingNotifications, notifications } =
     useNotificationStore();
+
+  const { user, getMe, followUser } = useUsersStore();
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -17,6 +20,11 @@ export const NotificationPage = () => {
 
     fetchNotifications();
   }, []);
+
+  const handleFollowUser = async (userId: string) => {
+    await followUser(userId);
+    await getMe();
+  };
 
   return (
     <>
@@ -50,8 +58,21 @@ export const NotificationPage = () => {
                     : "Đã thích bài viết của bạn."}
                 </p>
               </div>
-              <button className="text-black font-semibold border px-5 py-1 rounded-lg hover:opacity-60 transition-all ease-in-out">
-                Theo dõi
+              <button
+                className={`${
+                  user?.followings?.some(
+                    (following) => following._id === notification.from._id
+                  )
+                    ? "text-gray-500"
+                    : ""
+                } text-black font-semibold border px-5 py-1 rounded-lg hover:opacity-60 transition-all ease-in-out`}
+                onClick={() => handleFollowUser(notification.from._id)}
+              >
+                {user?.followings?.some(
+                  (following) => following._id === notification.from._id
+                )
+                  ? "Đã theo dõi"
+                  : "Theo dõi"}
               </button>
             </div>
           </div>

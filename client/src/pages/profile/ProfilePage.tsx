@@ -24,9 +24,15 @@ import { Dayjs } from "dayjs";
 import { User } from "../../types/user.type";
 import { useUsersStore } from "../../store/usersStore";
 import { Clipboard } from "lucide-react";
+import { usePostStore } from "../../store/postStore";
+import { PostType } from "../../types/post.type";
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
+import toast from "react-hot-toast";
 
 export const Profilepage = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [posts, setPosts] = useState<PostType[]>([]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [gender, setGender] = useState("");
@@ -67,13 +73,17 @@ export const Profilepage = () => {
   };
 
   const { getMe, updateProfile, uploadAvatar } = useUsersStore();
+  const { getPostsByUserName, likePost } = usePostStore();
 
   useEffect(() => {
-    const checkMe = async () => {
+    const fetchDatas = async () => {
       const data = await getMe();
+      const posts = await getPostsByUserName(data.username, 1, 10);
       setUser(data);
+      setPosts(posts);
     };
-    checkMe();
+
+    fetchDatas();
   }, []);
 
   const [file, setFile] = useState<File | null>(null);
@@ -88,6 +98,17 @@ export const Profilepage = () => {
 
   const handleFileUploadClick = () => {
     document.getElementById("fileInput")?.click();
+  };
+
+  const handleClipboard = () => {
+    navigator.clipboard.writeText(`${window.location.href}/${user?.username}`);
+    toast.success("Copy thành công.");
+  };
+
+  const handleLike = async (post: PostType) => {
+    await likePost(post._id);
+    const data = await getPostsByUserName(user?.username || "", 1, 10);
+    setPosts(data);
   };
 
   return (
@@ -109,7 +130,7 @@ export const Profilepage = () => {
             <span className="opacity-45">
               {user?.followers?.length} người theo dõi
             </span>
-            <Clipboard/>
+            <Clipboard className="cursor-pointer" onClick={handleClipboard} />
           </div>
           <div className="ml-4">{user?.bio}</div>
         </div>
@@ -143,52 +164,70 @@ export const Profilepage = () => {
           <div className="font-normal opacity-70">Còn 3</div>
         </div>
         <hr />
-        <div className="flex flex-col justify-center gap-4 p-4">
-          <div className="flex gap-4 mx-2">
-            <div className="cursor-pointer mt-2">
-              <Avatar
-                src={user?.avatar || "/avatar.png"}
-                alt={user?.username}
-                className="w-6"
-              />
-            </div>
-            <div className="flex flex-1 flex-col gap-2">
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-1 justify-between">
-                  <div className="flex gap-2 font-bold cursor-pointer">
-                    wnhu293
-                    <span className="opacity-15 font-normal">18 giờ</span>
+        {posts?.map((post) => (
+          <div
+            key={post._id}
+            className="flex flex-col justify-center gap-4 p-4"
+          >
+            <div className="flex gap-4 mx-2">
+              <div className="cursor-pointer mt-2">
+                <Avatar
+                  src={post.user.avatar || "/avatar.png"}
+                  alt={post.user.username}
+                  className="w-6"
+                />
+              </div>
+              <div className="flex flex-1 flex-col gap-2">
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-1 justify-between">
+                    <div className="flex gap-2 font-bold cursor-pointer">
+                      {post.user.name}
+                      <span className="opacity-15 font-normal">
+                        {formatDistanceToNow(new Date(post.created_at ?? ""), {
+                          addSuffix: true,
+                          locale: vi,
+                        })}
+                      </span>
+                    </div>
+                    <button className="rounded-full p-1 hover:bg-gray-300">
+                      <EllipsisHorizontalIcon className="size-5" />
+                    </button>
                   </div>
-                  <button className="rounded-full p-1 hover:bg-gray-300">
-                    <EllipsisHorizontalIcon className="size-5" />
-                  </button>
-                </div>
-                <p className="text-sm font-normal">tho bay mau</p>
-                <div className="flex gap-2">
-                  <img
-                    src="https://intomau.com/Content/upload/images/tho-bay-mau-quan-khan.jpg"
-                    alt=""
-                    className="w-full h-72 rounded-lg"
-                  />
-                </div>
-                <div className="flex gap-4">
-                  <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
-                    <HeartIcon className="size-5" />
-                  </button>
-                  <button className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50">
-                    <ChatBubbleLeftIcon className="size-5" />
-                  </button>
-                  <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
-                    <ArrowPathRoundedSquareIcon className="size-5" />
-                  </button>
-                  <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
-                    <PaperAirplaneIcon className="size-5" />
-                  </button>
+                  <p className="text-sm font-normal">{post.captions}</p>
+                  <div className="flex gap-2">
+                    <img
+                      className="h-72 w-full rounded-lg object-cover object-center"
+                      src={post?.medias[0]?.url}
+                      alt="nature image"
+                    />
+                  </div>
+                  <div className="flex gap-4">
+                    <button
+                      className="rounded-full p-1 hover:scale-125 flex items-center gap-1"
+                      onClick={() => handleLike(post)}
+                    >
+                      {post.like?.some((item) => item.user_id === user?._id) ? (
+                        <HeartIcon fill="red" className="size-5 text-red-500" />
+                      ) : (
+                        <HeartIcon className="size-5" />
+                      )}
+                      <span className="text-sm">{post.like?.length || ""}</span>
+                    </button>
+                    <button className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50">
+                      <ChatBubbleLeftIcon className="size-5" />
+                    </button>
+                    <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
+                      <ArrowPathRoundedSquareIcon className="size-5" />
+                    </button>
+                    <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
+                      <PaperAirplaneIcon className="size-5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        ))}
       </div>
       {isOpen && (
         <>
@@ -231,13 +270,13 @@ export const Profilepage = () => {
                         <Avatar
                           alt={user?.username}
                           src={URL.createObjectURL(file)}
-                          sx={{ width: 56, height: 56 }}
+                          sx={{ width: 56, height: 56, cursor: "pointer" }}
                         />
                       ) : (
                         <Avatar
                           alt={user?.username}
                           src={user?.avatar}
-                          sx={{ width: 56, height: 56 }}
+                          sx={{ width: 56, height: 56, cursor: "pointer" }}
                         />
                       )}
                     </div>

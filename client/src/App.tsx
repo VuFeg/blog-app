@@ -12,6 +12,7 @@ import { PrivateLayout } from "./layouts/PrivateLayout";
 import { useAuthStore } from "./store/authStore";
 import { CommentPage } from "./pages/comment/CommentPage";
 import { NotificationPage } from "./pages/notification/NotificationPage";
+import { UserProfilePage } from "./pages/profile/UserProfilePage";
 
 const App = () => {
   const { isAuthenticated } = useAuthStore();
@@ -35,8 +36,6 @@ const App = () => {
             </PrivateLayout>
           }
         />
-        <Route path="/post-rep-cmt" element={<PostRepCmt />} />
-        <Route path="/post-cmt" element={<CommentPage />} />
         <Route
           path="/searchs"
           element={
@@ -66,6 +65,22 @@ const App = () => {
           element={
             <PrivateLayout>
               <Profilepage />
+            </PrivateLayout>
+          }
+        />
+        <Route
+          path="/:username"
+          element={
+            <PrivateLayout>
+              <UserProfilePage />
+            </PrivateLayout>
+          }
+        />
+        <Route
+          path="/:username/post/:postId"
+          element={
+            <PrivateLayout>
+              <CommentPage />
             </PrivateLayout>
           }
         />
