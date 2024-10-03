@@ -12,6 +12,7 @@ export const envConfig = {
   mongodbPostsCollection: process.env.MONGODB_POSTS_COLLECTION as string,
   mongodbNotificationsCollection: process.env.MONGODB_NOTIFICATIONS_COLLECTION as string,
   mongodbLikesCollection: process.env.MONGODB_LIKES_COLLECTION as string,
+  mongodbCommentsCollection: process.env.MONGODB_COMMENTS_COLLECTION as string,
 
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET as string,
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET as string,

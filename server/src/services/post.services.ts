@@ -210,6 +210,113 @@ class PostServices {
     await database.likes.deleteOne({ user_id: user_id_obj, post_id: post_id_obj })
     return { message: 'Unlike post successfully' }
   }
+  async commentPost(user_id: string, post_id: string, content: string) {
+    const post_id_obj = new ObjectId(post_id)
+    const user_id_obj = new ObjectId(user_id)
+    await database.comments.insertOne({
+      user_id: user_id_obj,
+      post_id: post_id_obj,
+      content,
+      created_at: new Date()
+    })
+    const post = await database.posts.findOne({ _id: post_id_obj })
+    if (user_id !== post?.user_id.toString())
+      await database.notifications.insertOne(
+        new Notification({
+          to: new ObjectId(post?.user_id),
+          from: user_id_obj,
+          type: NotificationType.Comment,
+          read: false
+        })
+      )
+    return { message: 'Comment post successfully' }
+  }
+  async getCommentsPost(post_id: string) {
+    const comments = await database.comments
+      .aggregate([
+        {
+          $match: { post_id: new ObjectId(post_id) }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user_id',
+            foreignField: '_id',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: { path: '$user' }
+        },
+        {
+          $project: {
+            user_id: 0,
+            'user.password': 0,
+            'user.forgot_password_token': 0
+          }
+        },
+        { $sort: { created_at: -1 } }
+      ])
+      .toArray()
+
+    return comments
+  }
+  async getPost(post_id: string) {
+    const post = await database.posts
+      .aggregate([
+        {
+          $match: { _id: new ObjectId(post_id) }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user_id',
+            foreignField: '_id',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: { path: '$user' }
+        },
+        {
+          $lookup: {
+            from: 'bookmarks',
+            localField: '_id',
+            foreignField: 'post_id',
+            as: 'bookmark'
+          }
+        },
+        {
+          $lookup: {
+            from: 'likes',
+            localField: '_id',
+            foreignField: 'post_id',
+            as: 'like'
+          }
+        },
+        {
+          $addFields: {
+            bookmarks: {
+              $filter: {
+                input: '$bookmark',
+                as: 'item',
+                cond: {
+                  $eq: ['$$item.user_id', new ObjectId(post_id)]
+                }
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            user_id: 0
+          }
+        }
+      ])
+      .toArray()
+
+    return post[0]
+  }
 }
 
 const postServices = new PostServices()

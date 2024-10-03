@@ -31,8 +31,8 @@ export const getSuggestsController = async (req: Request, res: Response, next: N
 export const getUserProfileController = async (req: Request<UserProfileParams>, res: Response) => {
   const { username } = req.params
   const result = await userServices.getUserProfile(username)
-  const followers = await userServices.getFollowers(username)
-  const followings = await userServices.getFollowings(username)
+  const followers = await userServices.getFollowers(result._id.toString())
+  const followings = await userServices.getFollowings(result._id.toString())
 
   return res.status(HTTP_STATUS_CODE.OK).json({ result: { ...result, followers, followings } })
 }
