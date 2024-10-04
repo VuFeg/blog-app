@@ -12,6 +12,10 @@ export type LoginSchema = z.infer<typeof loginSchema>;
 
 export const registerSchema = z
   .object({
+    name: z
+    .string()
+    .min(1, "Yêu cầu nhập họ và tên.")
+    .max(100, "Họ và tên không được quá 100 ký tự."),
     email: z
       .string()
       .min(1, "Yêu cầu nhập email.")
