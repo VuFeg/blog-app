@@ -12,6 +12,7 @@ import { PrivateLayout } from "./layouts/PrivateLayout";
 import { useAuthStore } from "./store/authStore";
 import { CommentPage } from "./pages/comment/CommentPage";
 import { NotificationPage } from "./pages/notification/NotificationPage";
+import { AuthLayout } from "./layouts/AuthLayout";
 
 const App = () => {
   const { isAuthenticated } = useAuthStore();
@@ -55,11 +56,19 @@ const App = () => {
         />
         <Route
           path="/login"
-          element={isAuthenticated ? <Navigate to={"/"} /> : <LoginPage />}
+          element={isAuthenticated ? <Navigate to={"/"} /> :
+            <AuthLayout>
+              <LoginPage />
+            </AuthLayout>
+          }
         />
         <Route
           path="/register"
-          element={isAuthenticated ? <Navigate to={"/"} /> : <RegisterPage />}
+          element={isAuthenticated ? <Navigate to={"/"} /> :
+            <AuthLayout>
+              <RegisterPage />
+            </AuthLayout>
+          }
         />
         <Route
           path="/profile"
