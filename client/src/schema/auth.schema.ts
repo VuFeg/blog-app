@@ -23,12 +23,19 @@ export const registerSchema = z
     username: z
       .string()
       .min(1, "Yêu cầu nhập tên đăng nhập.")
-      .max(32, "Tên đăng nhập không được quá 32 ký tự."),
+      .max(32, "Tên đăng nhập không được quá 32 ký tự.")
+      .regex(
+        /^[a-zA-Z0-9_]+$/,
+        "Tên đăng nhập không được chứa ký tự đặc biệt."
+      ),
     password: z
       .string()
       .min(8, "Mật khẩu tối thiểu 8 ký tự.")
       .max(26, "Mật khẩu không được quá 26 ký tự."),
     confirmPassword: z.string().min(1, "Yêu cầu nhập lại mật khẩu."),
+    acceptTerms: z.boolean().refine((data) => data, {
+      message: "Yêu cầu chấp nhận điều khoản",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],

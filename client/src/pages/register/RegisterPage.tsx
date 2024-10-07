@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { registerSchema, RegisterSchema } from "../../schema/auth.schema";
 import { LoginRegisterSkeleton } from "../../components/skeleton/LoginRegisterSkeleton";
+import { UserPlus } from "lucide-react";
 
 export const RegisterPage = () => {
   const {
@@ -18,13 +19,14 @@ export const RegisterPage = () => {
       username: "",
       password: "",
       confirmPassword: "",
+      acceptTerms: false,
     },
   });
 
   const { register: registerUser, isRegistering } = useAuthStore();
 
   const handleRegister = async (data: RegisterSchema) => {
-    await registerUser({ ...data, name: data.username });
+    await registerUser(data);
   };
 
   if (isRegistering) {
@@ -32,139 +34,112 @@ export const RegisterPage = () => {
   }
 
   return (
-    <section className="bg-gray-50 max-w-4xl mx-auto">
-      <div className="flex  items-center ">
-        <div className="flex-1 my-8 py-8 ">
-          <div className="h-full bg-white rounded-lg ">
-            <div className="p-6 space-y-4 sm:p-8">
-              <h1 className="text-xl font-bold text-gray-900 md:text-2xl ">
-                Đăng ký
-              </h1>
-              <form
-                className="space-y-4"
-                noValidate
-                onSubmit={handleSubmit(handleRegister)}
-              >
-                <div>
-                  <label className="block mb-2 text-sm font-medium ">
-                    Họ và tên
-                  </label>
-                  <input
-                    {...register("name")}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                    placeholder="Nguyễn Thị Quỳnh Như"
-                  />
-                  {errors.name && (
-                    <p className="text-red-500">{errors.name.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium ">
-                    Tên tài khoản
-                  </label>
-                  <input
-                    {...register("username")}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                    placeholder="ntqn293"
-                  />
-                  {errors.username && (
-                    <p className="text-red-500">{errors.username.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block mb-2 text-sm font-medium ">Email</label>
-                  <input
-                    {...register("email")}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                    placeholder="ntqn293@gmail.com"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500">{errors.email.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block mb-2 text-sm font-medium "
-                  >
-                    Mật khẩu
-                  </label>
-                  <input
-                    {...register("password")}
-                    type="password"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                  />
-                  {errors.password && (
-                    <p className="text-red-500">{errors.password.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="block mb-2 text-sm font-medium "
-                  >
-                    Nhập lại mật khẩu
-                  </label>
-                  <input
-                    {...register("confirmPassword")}
-                    type="password"
-                    placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                  />
-                  {errors.confirmPassword && (
-                    <p className="text-red-500">
-                      {errors.confirmPassword.message}
-                    </p>
-                  )}
-                </div>
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="terms"
-                      aria-describedby="terms"
-                      type="checkbox"
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300"
-                      required
-                    />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="terms" className="font-light text-gray-500">
-                      Tôi đồng ý với{" "}
-                      <a
-                        className="font-medium text-primary-600 hover:underline"
-                        href="#"
-                      >
-                        Điều Khoản và Điều Kiện
-                      </a>
-                    </label>
-                  </div>
-                </div>
-                <button
-                  disabled={isRegistering}
-                  type="submit"
-                  className={`${isRegistering ? "cursor-not-allowed" : ""
-                    } w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center`}
+    <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+      <div className="mt-12 flex flex-col items-center">
+        <h1 className="text-2xl xl:text-3xl font-extrabold text-[#6d68e8]">
+          Tạo tài khoản
+        </h1>
+        <div className="w-full flex-1 mt-8">
+          <form
+            className="mx-auto max-w-xs"
+            noValidate
+            onSubmit={handleSubmit(handleRegister)}
+          >
+            <input
+              className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+              {...register("username")}
+              type="text"
+              placeholder="Username"
+            />
+            {errors.username && (
+              <p className="text-red-500">{errors.username.message}</p>
+            )}
+            <input
+              className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+              {...register("name")}
+              type="text"
+              placeholder="Your name"
+            />
+            {errors.name && (
+              <p className="text-red-500">{errors.name.message}</p>
+            )}
+            <input
+              className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+              {...register("email")}
+              type="email"
+              placeholder="Email"
+            />
+            {errors.email && (
+              <p className="text-red-500">{errors.email.message}</p>
+            )}
+            <input
+              className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+              {...register("password")}
+              type="password"
+              placeholder="Password"
+            />
+            {errors.password && (
+              <p className="text-red-500">{errors.password.message}</p>
+            )}
+            <input
+              className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
+              {...register("confirmPassword")}
+              type="password"
+              placeholder="Confirm Password"
+            />
+            {errors.confirmPassword && (
+              <p className="text-red-500">{errors.confirmPassword.message}</p>
+            )}
+            <div className="flex items-start mt-5">
+              <div className="flex items-center h-5">
+                <input
+                  id="terms"
+                  aria-describedby="terms"
+                  type="checkbox"
+                  className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                  required
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label
+                  htmlFor="terms"
+                  className="font-light text-gray-500 dark:text-gray-300"
                 >
-                  Đăng Ký
-                </button>
-                <p className="text-sm font-light text-gray-500 ">
-                  Bạn đã có tài khoản?{" "}
-                  <Link
-                    to={"/login"}
-                    className="font-medium text-primary-600 hover:underline "
+                  Tôi đồng ý với các{" "}
+                  <a
+                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    href="#"
                   >
-                    Đăng Nhập
-                  </Link>
-                </p>
-              </form>
+                    Điều khoản và Điều kiện
+                  </a>
+                </label>
+              </div>
             </div>
+            {errors.acceptTerms && (
+              <p className="text-red-500">{errors.acceptTerms.message}</p>
+            )}
+            <button
+              disabled={isRegistering}
+              className={`${isRegistering ? "cursor-not-allowed" : ""
+                } mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}
+            >
+              <UserPlus className="w-6 h-6 -ml-2" />
+              <span className="ml-3">Đăng ký</span>
+            </button>
+          </form>
+          <div className="mx-auto max-w-xs">
+            <p className="mt-6 text-sm text-gray-600 text-center">
+              Bạn đã có tài khoản?{" "}
+              <Link
+                to="/login"
+                className="hover:border-b hover:opacity-80 border-[#6d68e8]/80 text-[#6d68e8] font-bold"
+              >
+                Đăng nhập ở đây
+              </Link>
+            </p>
           </div>
         </div>
-        <div className="flex-1 rounded-lg  ">
-          <img src="https://i.pinimg.com/1200x/a0/a8/46/a0a846db2c036d3a8fcf739bb5707e43.jpg" alt="ảnh" className="w-full h-[670px]" />
-        </div>
       </div>
-    </section>
+    </div>
   );
-};
+}; 
