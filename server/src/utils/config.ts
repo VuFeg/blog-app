@@ -20,5 +20,9 @@ export const envConfig = {
   awsRegion: process.env.AWS_REGION as string,
   awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
   awsSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
-  s3BucketName: process.env.S3_BUCKET_NAME as string
+  s3BucketName: process.env.S3_BUCKET_NAME as string,
+
+  clientGoogleId: process.env.CLIENT_GOOGLE_ID as string,
+  clientGoogleSecret: process.env.CLIENT_GOOGLE_SECRET as string,
+  callbackURL: process.env.CALLBACK_URL as string
 }

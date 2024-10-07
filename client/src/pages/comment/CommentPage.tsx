@@ -57,8 +57,8 @@ export const CommentPage = () => {
   };
 
   return (
-    <div className="mx-auto max-w-xl">
-      <div className="flex justify-between items-center h-16 mx-4">
+    <div className="mx-auto w-full md:max-w-xl">
+      <div className="hidden md:flex justify-between items-center h-16 mx-4">
         <div
           className="p-1 bg-white border rounded-full cursor-pointer"
           onClick={handleBack}
@@ -71,7 +71,7 @@ export const CommentPage = () => {
         </div>
       </div>
 
-      <div className=" min-h-screen border rounded-t-3xl mt-4">
+      <div className="bg-white min-h-screen md:border md:rounded-t-3xl pt-12 md:pt-0 mt-4">
         <div className="flex gap-5 px-6 py-4 ">
           <div className="flex flex-col flex-1 gap-5 py-4 border-b">
             <div className="flex flex-col gap-3">
@@ -123,6 +123,7 @@ export const CommentPage = () => {
                 onClick={() => setOpen(true)}
               >
                 <ChatBubbleLeftIcon className="size-5" />
+                <span>{comments?.length || ""}</span>
               </button>
               {post && (
                 <PostRepCmt
@@ -174,7 +175,16 @@ export const CommentPage = () => {
                     <EllipsisHorizontalIcon className="size-5" />
                   </button>
                 </div>
-                <div className="flex flex-1">{comment.content}</div>
+                <div className="flex flex-col flex-1">
+                  {comment.content
+                    ?.split("\n")
+                    .map((text: string, index: number) => (
+                      <span key={index}>
+                        {text}
+                        <br />
+                      </span>
+                    ))}
+                </div>
                 <div className="flex gap-4 mt-2">
                   <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
                     <HeartIcon className="size-5" />

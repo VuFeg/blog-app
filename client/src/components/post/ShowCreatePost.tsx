@@ -57,11 +57,18 @@ export const ShowCreatePost = ({ isOpen, setIsOpen }: ShowCreatePostProps) => {
           ></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 max-w-xl w-full ">
             <div className="max-w-xl">
-              <h1 className="text-lg text-white font-bold text-center">
-                New Post
-              </h1>
               <div className="bg-white rounded-lg p-6 z-30 mt-4">
-                <div className="flex gap-4">
+                <div className="flex justify-between items-center px-6 border-b pb-4 border-black/50">
+                  <div
+                    className="text-md cursor-pointer"
+                    onClick={() => setIsOpen(!isOpen)}
+                  >
+                    Hủy
+                  </div>
+                  <h3 className="text-black font-bold">Blog trả lời</h3>
+                  <div className="w-7"></div>
+                </div>
+                <div className="flex gap-4 mt-4">
                   <div>
                     <div className="p-1 rounded-full border cursor-pointer mt-2">
                       <Avatar

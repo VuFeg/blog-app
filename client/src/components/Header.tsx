@@ -1,7 +1,15 @@
 import { Button } from "@mui/material";
 import { useAuthStore } from "../store/authStore";
 import { Link, NavLink } from "react-router-dom";
-import { Heart, House, LogOut, Plus, Search, User } from "lucide-react";
+import {
+  Heart,
+  House,
+  LogOut,
+  MoveLeft,
+  Plus,
+  Search,
+  User,
+} from "lucide-react";
 import { useState } from "react";
 import { ShowCreatePost } from "./post/ShowCreatePost";
 
@@ -13,11 +21,20 @@ export const Header = () => {
     await logout();
   };
 
+  const handleBack = () => {
+    window.history.back();
+  };
+
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 bg-white md:bg-transparent md:hidden block py-1 px-4 z-10">
+      <div className="fixed top-0 left-0 right-0 bg-white md:bg-transparent md:hidden block py-2 px-4 z-10">
         <div className="flex justify-between items-center">
-          <div></div>
+          <div
+            className="p-1 bg-white border rounded-full cursor-pointer"
+            onClick={handleBack}
+          >
+            <MoveLeft className="size-4" />
+          </div>
           <Link to={"/"}>
             <img src="/logo.png" alt="" className="cursor-pointer" />
           </Link>

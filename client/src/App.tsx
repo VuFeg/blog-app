@@ -2,7 +2,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import HomePage from "./pages/home/HomePage";
 import { Profilepage } from "./pages/profile/ProfilePage";
-import { PostRepCmt } from "./components/PostRepCmt";
 import { usePostStore } from "./store/postStore";
 import { CircularProgress } from "@mui/material";
 import { SearchPage } from "./pages/search/SearchPage";
@@ -55,18 +54,26 @@ const App = () => {
         />
         <Route
           path="/login"
-          element={isAuthenticated ? <Navigate to={"/"} /> :
-            <AuthLayout>
-              <LoginPage />
-            </AuthLayout>
+          element={
+            isAuthenticated ? (
+              <Navigate to={"/"} />
+            ) : (
+              <AuthLayout>
+                <LoginPage />
+              </AuthLayout>
+            )
           }
         />
         <Route
           path="/register"
-          element={isAuthenticated ? <Navigate to={"/"} /> :
-            <AuthLayout>
-              <RegisterPage />
-            </AuthLayout>
+          element={
+            isAuthenticated ? (
+              <Navigate to={"/"} />
+            ) : (
+              <AuthLayout>
+                <RegisterPage />
+              </AuthLayout>
+            )
           }
         />
         <Route

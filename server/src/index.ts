@@ -1,6 +1,6 @@
 import express from 'express'
-import { envConfig } from './utils/config'
 import cors from 'cors'
+import { envConfig } from './utils/config'
 import authRouter from './routes/auth.route'
 import database from './services/database.services'
 import userRouter from './routes/user.route'
@@ -21,7 +21,7 @@ app.use('/api/posts', postRouter)
 app.use('/api/medias', mediaRouter)
 app.use('/api/notifications', notificationRouter)
 
-app.use(defaultErrorHandler)
+app.use(() => defaultErrorHandler)
 
 database.connect()
 

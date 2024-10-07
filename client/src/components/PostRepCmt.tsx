@@ -11,7 +11,7 @@ interface PostRepCmtProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   post: PostType;
-  setComments: (comments: CommentType[]) => void;
+  setComments?: (comments: CommentType[]) => void;
 }
 
 export const PostRepCmt = ({
@@ -38,14 +38,21 @@ export const PostRepCmt = ({
     await commentPost(post._id, value);
     setOpen(false);
     const data = await getComments(post._id);
-    setComments(data);
+    if (setComments) {
+      setComments(data);
+    }
   };
   return (
     <Modal open={open} onClose={() => setOpen(false)}>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full">
-        <div className="max-w-xl mx-auto bg-white border rounded-xl py-4">
+      <div className="absolute top-0 left-0 right-0 bottom-0 md:right-auto md:bottom-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-full">
+        <div className="md:max-w-xl flex flex-col h-full mx-auto bg-white md:border md:rounded-xl py-4">
           <div className="flex justify-between items-center px-6 border-b pb-4 border-black/50">
-            <div className="text-md">Hủy</div>
+            <div
+              className="text-md cursor-pointer"
+              onClick={() => setOpen(false)}
+            >
+              Hủy
+            </div>
             <h3 className="text-black font-bold">Blog trả lời</h3>
             <div className="w-7"></div>
           </div>
@@ -102,7 +109,7 @@ export const PostRepCmt = ({
             </div>
           </div>
 
-          <div className="flex justify-between items-center mx-8 my-4">
+          <div className="flex flex-1 justify-between md:items-center items-end mx-8 my-4">
             <div className="flex-1 text-sm text-gray-500 mt-4">
               Bất kỳ ai cũng có thể trả lời và trích dẫn
             </div>

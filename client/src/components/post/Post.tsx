@@ -15,6 +15,7 @@ import { usePostStore } from "../../store/postStore";
 import { useEffect, useState } from "react";
 import { PostSkeleton } from "../skeleton/PostSkeleton";
 import { CreatePostSkeleton } from "../skeleton/CreatePostSkeleton";
+import { PostRepCmt } from "../PostRepCmt";
 
 export const Post = () => {
   useEffect(() => {
@@ -28,6 +29,7 @@ export const Post = () => {
 
   const [currentPost, setCurrentPost] = useState<PostType | null>(null);
   const [posts, setPosts] = useState<PostType[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const { user } = useUsersStore();
   const {
@@ -64,6 +66,9 @@ export const Post = () => {
     setPosts(data);
     setCurrentPost(null);
   };
+  const getCurrentPost = (post: PostType) => {
+    setCurrentPost(post);
+  };
 
   return (
     <>
@@ -87,21 +92,12 @@ export const Post = () => {
             <div className="flex flex-1 flex-col gap-2">
               <div className="flex justify-between items-center font-bold">
                 <div className="flex gap-2">
-                  {post.user?.username === user?.username ? (
-                    <Link
-                      to={`/profile`}
-                      className="cursor-pointer text-md font-semibold"
-                    >
-                      {post.user?.username}
-                    </Link>
-                  ) : (
-                    <Link
-                      to={`/${post.user?.username}`}
-                      className="cursor-pointer text-md font-semibold"
-                    >
-                      {post.user?.username}
-                    </Link>
-                  )}
+                  <Link
+                    to={`/${post.user?.username}`}
+                    className="cursor-pointer text-md font-semibold"
+                  >
+                    {post.user?.username}
+                  </Link>
 
                   <span className="opacity-15 font-normal">
                     {formatDistanceToNow(new Date(post.created_at ?? ""), {
@@ -178,8 +174,15 @@ export const Post = () => {
               )}
               <span className="text-sm">{post.like?.length || ""}</span>
             </button>
-            <button className="flex items-center gap-1 rounded-full p-1 hover:scale-125">
+            <button
+              className="flex items-center gap-1 rounded-full p-1 hover:scale-125"
+              onClick={() => {
+                setIsOpen(!isOpen);
+                getCurrentPost(post);
+              }}
+            >
               <ChatBubbleLeftIcon className="size-5" />
+              <span>{post.comments?.length || ""}</span>
             </button>
             <button className="rounded-full p-1 hover:scale-125">
               <ArrowPathRoundedSquareIcon className="size-5" />
@@ -190,6 +193,9 @@ export const Post = () => {
           </div>
         </div>
       ))}
+      {currentPost && (
+        <PostRepCmt open={isOpen} setOpen={setIsOpen} post={currentPost} />
+      )}
     </>
   );
 };

@@ -55,7 +55,7 @@ export const SearchPage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white rounded-t-3xl border shadow-lg min-h-screen mt-24 md:mt-8">
+    <div className="w-full md:max-w-2xl mx-auto bg-white md:rounded-t-3xl md:border md:shadow-lg min-h-screen pt-16 md:pt-0 md:mt-8">
       <div className="flex flex-col justify-center">
         <div className="p-6 rounded-lg">
           <div className="relative">

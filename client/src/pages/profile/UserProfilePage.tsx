@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { User } from "../../types/user.type";
 import { useUsersStore } from "../../store/usersStore";
 import { Clipboard, Ellipsis, HeartIcon, MoveLeft } from "lucide-react";
@@ -14,10 +14,17 @@ import {
   EllipsisHorizontalIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
+import { PostRepCmt } from "../../components/PostRepCmt";
 export const UserProfilePage = () => {
+  const navigate = useNavigate();
+
   const { username } = useParams();
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<PostType[]>([]);
+  const [currentPost, setCurrentPost] = useState<PostType | null>(null);
+
+  const [isOpenCmt, setIsOpenCmt] = useState(false);
+
   const { user: me, getUserProfile, followUser, getMe } = useUsersStore();
   const { getPostsByUserName, likePost } = usePostStore();
 
@@ -41,6 +48,10 @@ export const UserProfilePage = () => {
     window.scrollTo(0, 0);
   }, [username]);
 
+  useEffect(() => {
+    if (me.username === username) navigate("/profile");
+  }, []);
+
   const handleClipboard = () => {
     navigator.clipboard.writeText(window.location.href);
   };
@@ -61,8 +72,8 @@ export const UserProfilePage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex justify-between items-center h-16 mx-4">
+    <div className="w-full md:max-w-2xl mx-auto">
+      <div className="md:flex justify-between items-center h-16 mx-4 hidden">
         <div
           className="p-1 bg-white border rounded-full cursor-pointer"
           onClick={handleBack}
@@ -76,7 +87,7 @@ export const UserProfilePage = () => {
           <Ellipsis className="size-4" />
         </div>
       </div>
-      <div className="bg-white rounded-t-3xl border shadow-lg mt-4 min-h-screen">
+      <div className="bg-white md:rounded-t-3xl md:border md:shadow-lg pt-12 mt-4 md:pt-0 min-h-screen">
         <div className="flex flex-col">
           <div className="p-4 mb-4 ">
             <div className="flex items-center justify-between mb-4">
@@ -197,8 +208,17 @@ export const UserProfilePage = () => {
                       )}
                       <span className="text-sm">{post.like?.length || ""}</span>
                     </button>
-                    <button className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50">
+                    <button
+                      className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50"
+                      onClick={() => {
+                        setIsOpenCmt(!isOpenCmt);
+                        setCurrentPost(post);
+                      }}
+                    >
                       <ChatBubbleLeftIcon className="size-5" />
+                      <span className="text-sm">
+                        {post.comments?.length || ""}
+                      </span>
                     </button>
                     <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
                       <ArrowPathRoundedSquareIcon className="size-5" />
@@ -212,6 +232,13 @@ export const UserProfilePage = () => {
             </div>
           </div>
         ))}
+        {currentPost && (
+          <PostRepCmt
+            open={isOpenCmt}
+            setOpen={setIsOpenCmt}
+            post={currentPost}
+          />
+        )}
       </div>
     </div>
   );

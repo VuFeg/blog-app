@@ -28,7 +28,7 @@ export const NotificationPage = () => {
 
   return (
     <>
-      <div className="max-w-2xl mx-auto bg-white border rounded-t-3xl shadow-lg min-h-screen mt-24 md:mt-8">
+      <div className="w-full md:max-w-2xl mx-auto bg-white md:border md:rounded-t-3xl md:shadow-lg min-h-screen pt-20 md:pt-0 md:mt-8">
         {gettingNotifications ? <NotificationSkeleton /> : null}
         {notifications?.map((notification) => (
           <div
@@ -55,7 +55,9 @@ export const NotificationPage = () => {
                 <p className="text-sm font-medium text-gray-400">
                   {notification.type === NotificationType.Follow
                     ? "Đã theo dõi bạn."
-                    : "Đã thích bài viết của bạn."}
+                    : notification.type === NotificationType.Like
+                    ? "Đã thích bài viết của bạn."
+                    : "Đã bình luận bài viết của bạn."}
                 </p>
               </div>
               <button

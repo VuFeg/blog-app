@@ -62,6 +62,14 @@ class PostServices {
             }
           },
           {
+            $lookup: {
+              from: 'comments',
+              localField: '_id',
+              foreignField: 'post_id',
+              as: 'comments'
+            }
+          },
+          {
             $addFields: {
               user: {
                 $map: {
@@ -90,6 +98,12 @@ class PostServices {
           {
             $unwind: {
               path: '$user'
+            }
+          },
+
+          {
+            $project: {
+              user_id: 0
             }
           }
         ])
@@ -174,7 +188,9 @@ class PostServices {
           },
           {
             $project: {
-              user_id: 0
+              user_id: 0,
+              'user.password': 0,
+              'user.forgot_password_token': 0
             }
           }
         ])

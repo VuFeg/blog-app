@@ -29,12 +29,15 @@ import { PostType } from "../../types/post.type";
 import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import toast from "react-hot-toast";
+import { PostRepCmt } from "../../components/PostRepCmt";
 
 export const Profilepage = () => {
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<PostType[]>([]);
+  const [currentPost, setCurrentPost] = useState<PostType | null>(null);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenCmt, setIsOpenCmt] = useState(false);
   const [gender, setGender] = useState("");
   const [bio, setBio] = useState("");
   const [website, setWebsite] = useState("");
@@ -112,7 +115,7 @@ export const Profilepage = () => {
   };
 
   return (
-    <div className="bg-white max-w-2xl rounded-t-3xl border shadow-lg min-h-screen mx-auto mt-24 md:mt-8">
+    <div className="bg-white w-full md:max-w-2xl md:rounded-t-3xl md:border md:shadow-lg min-h-screen mx-auto pt-12 md:pt-0 md:mt-8">
       <div className="flex flex-col">
         <div className="p-4 mb-4 ">
           <div className="flex items-center justify-between mb-4">
@@ -213,8 +216,17 @@ export const Profilepage = () => {
                       )}
                       <span className="text-sm">{post.like?.length || ""}</span>
                     </button>
-                    <button className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50">
+                    <button
+                      className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50"
+                      onClick={() => {
+                        setIsOpenCmt(!isOpenCmt);
+                        setCurrentPost(post);
+                      }}
+                    >
                       <ChatBubbleLeftIcon className="size-5" />
+                      <span className="text-sm">
+                        {post.comments?.length || ""}
+                      </span>
                     </button>
                     <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
                       <ArrowPathRoundedSquareIcon className="size-5" />
@@ -228,6 +240,13 @@ export const Profilepage = () => {
             </div>
           </div>
         ))}
+        {currentPost && (
+          <PostRepCmt
+            open={isOpenCmt}
+            setOpen={setIsOpenCmt}
+            post={currentPost}
+          />
+        )}
       </div>
       {isOpen && (
         <>

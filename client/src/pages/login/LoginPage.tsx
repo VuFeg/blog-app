@@ -63,6 +63,7 @@ export const LoginPage = () => {
               </div>
               <span className="ml-4">Đăng nhập với Google</span>
             </button>
+
             <button className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5">
               <div className="bg-white p-1 rounded-full">
                 <svg className="w-6" viewBox="0 0 32 32">
@@ -107,8 +108,9 @@ export const LoginPage = () => {
             )}
             <button
               disabled={isLoggingIn}
-              className={`${isLoggingIn ? "cursor-not-allowed" : ""
-                } mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}
+              className={`${
+                isLoggingIn ? "cursor-not-allowed" : ""
+              } mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}
             >
               <User className="w-6 h-6 -ml-2" />
               <span className="ml-3">Đăng nhập</span>

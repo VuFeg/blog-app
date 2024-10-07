@@ -22,7 +22,7 @@ export type PostType = {
   hashtags: any[];
   medias: MediaType[];
   mentions: any[];
-  comments: any[];
+  comments: CommentType[];
   created_at: string;
   updated_at: string;
   user: {
