@@ -12,12 +12,14 @@ interface UsersStoreProps {
   followingUser: boolean;
   searchingUser: boolean;
   updatingProfile: boolean;
+  gettingUserProfile: boolean;
   getMe: () => Promise<User>;
   getUserSuggests: () => Promise<User[]>;
   followUser: (userId: string) => Promise<void>;
   searchUser: (keyword: string) => Promise<User[]>;
   updateProfile: (data: UpdateUserReqBody) => Promise<void>;
   uploadAvatar: (file: File) => Promise<string>;
+  getUserProfile: (userId: string) => Promise<User>;
 }
 
 export const useUsersStore = create<UsersStoreProps>((set) => ({
@@ -28,6 +30,7 @@ export const useUsersStore = create<UsersStoreProps>((set) => ({
   followingUser: false,
   searchingUser: false,
   updatingProfile: false,
+  gettingUserProfile: false,
   getMe: async () => {
     try {
       set({ gettingMe: true });
@@ -120,5 +123,21 @@ export const useUsersStore = create<UsersStoreProps>((set) => ({
       set({ user: res.data.result });
       return res.data.result;
     } catch (error) {}
+  },
+  getUserProfile: async (username: string) => {
+    try {
+      set({ gettingUserProfile: true });
+      const accessToken = localStorage.getItem("accessToken");
+      const res = await axios.get(`${API_ROOT}/api/users/${username}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      set({ gettingUserProfile: false });
+      return res.data.result;
+    } catch (error) {
+      set({ gettingUserProfile: false });
+      return {} as User;
+    }
   },
 }));

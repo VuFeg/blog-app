@@ -1,83 +1,120 @@
-import { HeartIcon } from "lucide-react";
-import {
-  ArrowPathRoundedSquareIcon,
-  ChatBubbleLeftIcon,
-  EllipsisHorizontalIcon,
-  PaperAirplaneIcon,
-} from "@heroicons/react/24/outline";
-export const PostRepCmt = () => {
+import { Avatar, Modal } from "@mui/material";
+import { Hash, Image, MenuIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { CommentType, PostType } from "../types/post.type";
+import { formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
+import { useUsersStore } from "../store/usersStore";
+import { usePostStore } from "../store/postStore";
+
+interface PostRepCmtProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  post: PostType;
+  setComments: (comments: CommentType[]) => void;
+}
+
+export const PostRepCmt = ({
+  open,
+  setOpen,
+  post,
+  setComments,
+}: PostRepCmtProps) => {
+  const [value, setValue] = useState("");
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  const { user } = useUsersStore();
+  const { commentPost, getComments } = usePostStore();
+
+  useEffect(() => {
+    if (textAreaRef.current) {
+      textAreaRef.current.style.height = "auto";
+      textAreaRef.current.style.height =
+        textAreaRef.current.scrollHeight + "px";
+    }
+  }, [value]);
+
+  const handleComment = async () => {
+    await commentPost(post._id, value);
+    setOpen(false);
+    const data = await getComments(post._id);
+    setComments(data);
+  };
   return (
-    <div className="h-screen flex flex-col justify-center items-center ">
-      <div className="text-2xl mb-4 font-bold ">
-        <h3>Blog trả lời</h3>
-      </div>
-      <div className="flex justify-center  ">
-        <div className="bg-white rounded-3xl border shadow-lg">
-          <div className="flex flex-1 gap-5 p-4 border-b">
-            <div>
-              <img src={"/avatar.png"} alt="" className="w-6" />
-            </div>
-            <div className="flex flex-1 flex-col gap-3">
-              <div className="flex flex-1 justify-between font-bold">
-                <div>
-                  wnhu293
-                  <span className=" ml-3 opacity-15 font-normal">18 giờ</span>
-                </div>
-                <button className="hover:rounded-full p-2 hover:bg-gray-300 ...">
-                  <EllipsisHorizontalIcon className="size-5" />
-                </button>
-              </div>
-              <div>
-                Bố mẹ cho anh ăn học. ra đường người ta hỏi ước mơ anh làm gì.
-                Anh nói"Nhàm nhan nhồ"
-              </div>
-            </div>
+    <Modal open={open} onClose={() => setOpen(false)}>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full">
+        <div className="max-w-xl mx-auto bg-white border rounded-xl py-4">
+          <div className="flex justify-between items-center px-6 border-b pb-4 border-black/50">
+            <div className="text-md">Hủy</div>
+            <h3 className="text-black font-bold">Blog trả lời</h3>
+            <div className="w-7"></div>
           </div>
-          <div className="flex flex-1 gap-5 p-4 border-b">
-            <div>
-              <img src={"/avatar.png"} alt="" className="w-6" />
+          <div className="flex gap-3 mx-6 mt-4">
+            <div className="flex items-center flex-col mt-3">
+              <Avatar sx={{ width: 36, height: 36 }} src={post?.user?.avatar} />
+              <div className="w-[2px] h-full bg-black/30 mt-2 rounded-lg"></div>
             </div>
-            <div className="flex flex-1 flex-col gap-3">
-              <div className="flex flex-1 justify-between font-bold">
-                zuduong
-                <p>
-                  {" "}
-                  <button className="hover:rounded-full p-2  hover:bg-gray-300">
-                    <EllipsisHorizontalIcon className="size-5" />
-                  </button>
+            <div className="flex flex-1 flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-semibold">
+                  {post?.user?.username}
+                </h3>
+                <p className="text-sm font-medium text-gray-400">
+                  {formatDistanceToNow(new Date(post?.created_at ?? ""), {
+                    addSuffix: true,
+                    locale: vi,
+                  })}
                 </p>
               </div>
-              <div className="flex">
-                <input
-                  className="flex-1 outline-none"
-                  type="text"
-                  placeholder="Trả lời wnhu..."
-                />
+              <div className="flex flex-col gap-4">
+                {post?.captions
+                  ?.split("\n")
+                  .map((text: string, index: number) => (
+                    <span key={index}>
+                      {text}
+                      <br />
+                    </span>
+                  ))}
               </div>
-              <div className="flex gap-4 mt-2">
-                <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
-                  <HeartIcon className="size-5" />
-                </button>
-                <button className="flex items-center gap-1 rounded-full p-2 hover:bg-gray-300 opacity-50">
-                  <ChatBubbleLeftIcon className="size-5" />
-                </button>
-                <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
-                  <ArrowPathRoundedSquareIcon className="size-5" />
-                </button>
-                <button className="rounded-full p-2 hover:bg-gray-300 opacity-50">
-                  <PaperAirplaneIcon className="size-5" />
-                </button>
+              <img
+                src={post?.medias[0]?.url}
+                alt=""
+                className="h-72 max-w-full object-cover rounded-xl"
+              />
+            </div>
+          </div>
+          <div className="flex gap-3 mx-6 mt-4">
+            <Avatar sx={{ width: 36, height: 36 }} src={user?.avatar} />
+            <div className="flex flex-1 flex-col gap-1">
+              <h3 className="text-base font-semibold">{user?.username}</h3>
+              <textarea
+                rows={1}
+                className="w-full focus:outline-none resize-none"
+                placeholder={`Trả lời ${post?.user?.username}...`}
+                onChange={(e) => setValue(e.target.value)}
+                ref={textAreaRef}
+              ></textarea>
+              <div className="flex items-center gap-4 mt-2">
+                <Image className="size-5 cursor-pointer text-gray-800/50" />
+                <Hash className="size-5 cursor-pointer text-gray-800/50" />
+                <MenuIcon className="size-5 cursor-pointer text-gray-800/50" />
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-5 p-4 mb-4 border-b cursor-pointer justify-between">
-            <span className="opacity-60">
+
+          <div className="flex justify-between items-center mx-8 my-4">
+            <div className="flex-1 text-sm text-gray-500 mt-4">
               Bất kỳ ai cũng có thể trả lời và trích dẫn
-            </span>
-            <button className=" border px-4 py-1 rounded-md">Đăng</button>
+            </div>
+            <button
+              className="bg-[#4b4b4b] text-white px-4 py-2 rounded-md"
+              onClick={handleComment}
+            >
+              Đăng
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };

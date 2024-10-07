@@ -140,3 +140,36 @@ export const deletePostValidator = validate(
     ['params']
   )
 )
+
+export const commentPostValidator = validate(
+  checkSchema({
+    post_id: {
+      custom: {
+        options: async (value, { req }) => {
+          const post_id = new ObjectId(value)
+          const post = await database.posts.findOne({ _id: post_id })
+          if (!post) {
+            throw new ErrorWithStatus({
+              status: HTTP_STATUS_CODE.NOT_FOUND,
+              message: POST_MESSAGES.POST_NOT_FOUND
+            })
+          }
+          return true
+        }
+      }
+    },
+    content: {
+      trim: true,
+      isString: {
+        errorMessage: 'Content must be a string'
+      },
+      isLength: {
+        options: { min: 1, max: 1000 },
+        errorMessage: 'Content must be between 1 and 1000 characters'
+      }
+    },
+    image: {
+      optional: true
+    }
+  })
+)

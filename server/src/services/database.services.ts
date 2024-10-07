@@ -1,4 +1,5 @@
 import { Collection, Db, MongoClient } from 'mongodb'
+import { Comment } from '~/models/schemas/comment.schema'
 import { Follower } from '~/models/schemas/follower.schema'
 import { Like } from '~/models/schemas/like.schema'
 import { Notification } from '~/models/schemas/notification.schema'
@@ -54,6 +55,10 @@ class DatabaseService {
 
   get likes(): Collection<Like> {
     return this.db.collection(envConfig.mongodbLikesCollection)
+  }
+
+  get comments(): Collection<Comment> {
+    return this.db.collection(envConfig.mongodbCommentsCollection)
   }
 }
 

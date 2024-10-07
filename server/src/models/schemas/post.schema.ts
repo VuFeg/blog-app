@@ -8,7 +8,6 @@ type PostType = {
   hashtags?: string[]
   medias: MediaType[]
   mentions?: string[]
-  comments?: ObjectId[]
 
   created_at?: Date
   updated_at?: Date
@@ -21,7 +20,6 @@ export class Post {
   hashtags?: string[]
   medias: MediaType[]
   mentions?: string[]
-  comments?: ObjectId[]
 
   created_at: Date
   updated_at: Date
@@ -34,7 +32,6 @@ export class Post {
     this.hashtags = post.hashtags || []
     this.medias = post.medias || []
     this.mentions = post.mentions || []
-    this.comments = post.comments || []
     this.created_at = post.created_at || date
     this.updated_at = post.updated_at || date
   }

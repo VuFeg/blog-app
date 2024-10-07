@@ -41,3 +41,19 @@ export type PostType = {
     }
   ];
 };
+
+export type CommentType = {
+  _id: string;
+  user_id: string;
+  post_id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  user: {
+    _id: string;
+    name: string;
+    username: string;
+    email: string;
+    avatar: string;
+  };
+};

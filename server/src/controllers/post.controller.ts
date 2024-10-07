@@ -74,3 +74,26 @@ export const likePostController = async (req: Request, res: Response, next: Next
 
   return res.status(HTTP_STATUS_CODE.OK).json(result)
 }
+
+export const commentPostController = async (req: Request, res: Response, next: NextFunction) => {
+  const user_id = req.decoded_authorization?.user_id as string
+  const { post_id } = req.params
+  const { content } = req.body
+  const result = await postServices.commentPost(user_id, post_id, content)
+
+  return res.status(HTTP_STATUS_CODE.OK).json({ result })
+}
+
+export const getCommentsPostController = async (req: Request, res: Response, next: NextFunction) => {
+  const { post_id } = req.params
+  const result = await postServices.getCommentsPost(post_id)
+
+  return res.status(HTTP_STATUS_CODE.OK).json({ result })
+}
+
+export const getPostController = async (req: Request, res: Response, next: NextFunction) => {
+  const { post_id } = req.params
+  const result = await postServices.getPost(post_id)
+
+  return res.status(HTTP_STATUS_CODE.OK).json({ result })
+}

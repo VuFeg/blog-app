@@ -7,9 +7,17 @@ import { SearchSkeleton } from "../../components/skeleton/SearchSkeleton";
 export const SearchPage = () => {
   const [userSuggests, setUserSuggests] = useState<User[]>([]);
   const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [followedUsers, setFollowedUsers] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState("");
 
-  const { user, getUserSuggests, searchUser, followUser, gettingUserSuggests, searchingUser } = useUsersStore();
+  const {
+    user,
+    getUserSuggests,
+    searchUser,
+    followUser,
+    gettingUserSuggests,
+    searchingUser,
+  } = useUsersStore();
 
   useEffect(() => {
     const fetchUserSuggests = async () => {
@@ -20,9 +28,27 @@ export const SearchPage = () => {
 
     fetchUserSuggests();
   }, []);
+
   const handleFollow = async (user: User) => {
-    await followUser(user._id);
+    if (followedUsers.has(user._id)) {
+      await followUser(user._id);
+      setFollowedUsers((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(user._id);
+        return newSet;
+      });
+    } else {
+      await followUser(user._id);
+      setFollowedUsers((prev) => new Set(prev).add(user._id));
+    }
   };
+
+  const handleFollowUserSearch = async (user: User) => {
+    await followUser(user._id);
+    const data = await searchUser(search);
+    setSearchResults(data);
+  };
+
   const handleSearch = async () => {
     const data = await searchUser(search);
     setSearchResults(data);
@@ -65,8 +91,8 @@ export const SearchPage = () => {
         <div className="ml-6 opacity-30">
           <b>Gợi ý theo dõi</b>
         </div>
-        {gettingUserSuggests && (<SearchSkeleton/>)}
-        {searchingUser && (<SearchSkeleton/>)}
+        {gettingUserSuggests && <SearchSkeleton />}
+        {searchingUser && <SearchSkeleton />}
         {searchResults.length === 0
           ? userSuggests?.map((userSuggest) => (
               <div key={userSuggest._id} className="flex gap-5 pl-5 pt-6">
@@ -82,9 +108,8 @@ export const SearchPage = () => {
                         {userSuggest.name}
                       </div>
                     </div>
-                    {userSuggest.followers?.some(
-                      (item) => item.user_id === user._id
-                    ) ? (
+
+                    {followedUsers.has(userSuggest._id) ? (
                       <button
                         onClick={() => handleFollow(userSuggest)}
                         className="font-semibold border px-4 py-1 rounded-xl border-gray-500 text-gray-400"
@@ -120,18 +145,18 @@ export const SearchPage = () => {
                         {userSearch.name}
                       </div>
                     </div>
-                    {userSearch.followers?.some(
+                    {userSearch.followers.some(
                       (item) => item._id === user._id
                     ) ? (
                       <button
-                        onClick={() => handleFollow(userSearch)}
+                        onClick={() => handleFollowUserSearch(userSearch)}
                         className="font-semibold border px-4 py-1 rounded-xl border-gray-500 text-gray-400"
                       >
                         Đang theo dõi
                       </button>
                     ) : (
                       <button
-                        onClick={() => handleFollow(userSearch)}
+                        onClick={() => handleFollowUserSearch(userSearch)}
                         className="font-semibold border px-4 py-1 rounded-xl border-gray-500"
                       >
                         Theo dõi
