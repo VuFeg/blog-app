@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import {
+  BookmarkType,
   CommentType,
   CreatePostBodyReq,
   MediaType,
@@ -18,6 +19,8 @@ interface PostStore {
   gettingPost: boolean;
   gettingComments: boolean;
   commentingPost: boolean;
+  isBookmarked: boolean;
+  isGettingBookmarks: boolean;
 
   getNewFeeds: () => Promise<PostType[]>;
   createPost: (post: CreatePostBodyReq) => Promise<void>;
@@ -32,6 +35,8 @@ interface PostStore {
   getPost: (postId: string) => Promise<PostType>;
   getComments: (postId: string) => Promise<CommentType[]>;
   commentPost: (postId: string, comment: string) => Promise<void>;
+  bookmarkPost: (postId: string) => Promise<void>;
+  getBookmarks: () => Promise<BookmarkType[]>;
 }
 
 export const usePostStore = create<PostStore>((set) => ({
@@ -44,6 +49,8 @@ export const usePostStore = create<PostStore>((set) => ({
   gettingPost: false,
   gettingComments: false,
   commentingPost: false,
+  isBookmarked: false,
+  isGettingBookmarks: false,
 
   getNewFeeds: async () => {
     try {
@@ -204,6 +211,42 @@ export const usePostStore = create<PostStore>((set) => ({
       set({ commentingPost: false });
     } catch (error) {
       set({ commentingPost: false });
+    }
+  },
+
+  bookmarkPost: async (post_id: string) => {
+    try {
+      set({ isBookmarked: true });
+      const accessToken = localStorage.getItem("accessToken");
+      await axios.post(
+        `${API_ROOT}/api/bookmarks/${post_id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      set({ isBookmarked: false });
+    } catch (error) {
+      set({ isBookmarked: false });
+    }
+  },
+
+  getBookmarks: async () => {
+    try {
+      set({ isGettingBookmarks: true });
+      const accessToken = localStorage.getItem("accessToken");
+      const res = await axios.get(`${API_ROOT}/api/bookmarks`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      set({ isGettingBookmarks: false });
+      return res.data.result;
+    } catch (error) {
+      set({ isGettingBookmarks: false });
     }
   },
 }));

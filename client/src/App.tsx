@@ -13,6 +13,8 @@ import { CommentPage } from "./pages/comment/CommentPage";
 import { NotificationPage } from "./pages/notification/NotificationPage";
 import { AuthLayout } from "./layouts/AuthLayout";
 import { UserProfilePage } from "./pages/profile/UserProfilePage";
+import { ProfileLayout } from "./layouts/ProfileLayout";
+import { ProfileRepost } from "./pages/profile/ProfileRepost";
 
 const App = () => {
   const { isAuthenticated } = useAuthStore();
@@ -80,7 +82,19 @@ const App = () => {
           path="/profile"
           element={
             <PrivateLayout>
-              <Profilepage />
+              <ProfileLayout>
+                <Profilepage />
+              </ProfileLayout>
+            </PrivateLayout>
+          }
+        />
+        <Route
+          path="/profile/reposts"
+          element={
+            <PrivateLayout>
+              <ProfileLayout>
+                <ProfileRepost />
+              </ProfileLayout>
             </PrivateLayout>
           }
         />

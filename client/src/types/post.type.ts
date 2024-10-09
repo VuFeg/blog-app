@@ -32,7 +32,9 @@ export type PostType = {
     email: string;
     avatar: string;
   };
-  bookmarks: any[];
+  bookmark: [
+    { _id: string; user_id: string; post_id: string; created_at: string }
+  ];
   like: [
     {
       _id: string;
@@ -56,4 +58,17 @@ export type CommentType = {
     email: string;
     avatar: string;
   };
+};
+
+export type BookmarkType = {
+  _id: string;
+  post: PostType;
+  user: {
+    _id: string;
+    name: string;
+    username: string;
+    email: string;
+    avatar: string;
+  };
+  created_at: string;
 };

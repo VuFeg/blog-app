@@ -2,13 +2,6 @@ import { formatDistanceToNow } from "date-fns";
 import { vi } from "date-fns/locale";
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { Link } from "react-router-dom";
-import {
-  ArrowPathRoundedSquareIcon,
-  ChatBubbleLeftIcon,
-  EllipsisHorizontalIcon,
-  HeartIcon,
-  PaperAirplaneIcon,
-} from "@heroicons/react/24/outline";
 import { PostType } from "../../types/post.type";
 import { useUsersStore } from "../../store/usersStore";
 import { usePostStore } from "../../store/postStore";
@@ -16,6 +9,7 @@ import { useEffect, useState } from "react";
 import { PostSkeleton } from "../skeleton/PostSkeleton";
 import { CreatePostSkeleton } from "../skeleton/CreatePostSkeleton";
 import { PostRepCmt } from "../PostRepCmt";
+import { Ellipsis, Heart, MessageSquare, Repeat, Repeat1 } from "lucide-react";
 
 export const Post = () => {
   useEffect(() => {
@@ -39,6 +33,9 @@ export const Post = () => {
     deletingPost,
     likePost,
     isCreatingPost,
+    bookmarkPost,
+    isBookmarked,
+    getBookmarks,
   } = usePostStore();
 
   const handleLike = async (post: PostType) => {
@@ -68,6 +65,13 @@ export const Post = () => {
   };
   const getCurrentPost = (post: PostType) => {
     setCurrentPost(post);
+  };
+
+  const handleBookmark = async (post: PostType) => {
+    await bookmarkPost(post._id);
+    await getBookmarks();
+    const data = await getNewFeeds();
+    setPosts(data);
   };
 
   return (
@@ -114,7 +118,7 @@ export const Post = () => {
                   className="rounded-full p-1 hover:bg-gray-300/40"
                   onClick={(e) => handleClick(e, post)}
                 >
-                  <EllipsisHorizontalIcon className="size-5" />
+                  <Ellipsis className="size-5" />
                 </button>
                 <Menu
                   id="basic-menu"
@@ -168,9 +172,9 @@ export const Post = () => {
               onClick={() => handleLike(post)}
             >
               {post.like?.some((item) => item.user_id === user?._id) ? (
-                <HeartIcon fill="red" className="size-5 text-red-500" />
+                <Heart fill="red" className="size-5 text-red-500" />
               ) : (
-                <HeartIcon className="size-5" />
+                <Heart className="size-5" />
               )}
               <span className="text-sm">{post.like?.length || ""}</span>
             </button>
@@ -181,14 +185,21 @@ export const Post = () => {
                 getCurrentPost(post);
               }}
             >
-              <ChatBubbleLeftIcon className="size-5" />
+              <MessageSquare className="size-5" />
               <span>{post.comments?.length || ""}</span>
             </button>
-            <button className="rounded-full p-1 hover:scale-125">
-              <ArrowPathRoundedSquareIcon className="size-5" />
-            </button>
-            <button className="rounded-full p-1 hover:scale-125">
-              <PaperAirplaneIcon className="size-5" />
+            <button
+              className={`${
+                isBookmarked && "cursor-wait"
+              } rounded-full p-1 hover:scale-125`}
+              onClick={() => handleBookmark(post)}
+              disabled={isBookmarked}
+            >
+              {post.bookmark?.some((item) => item.user_id === user?._id) ? (
+                <Repeat1 className="size-5" />
+              ) : (
+                <Repeat className="size-5" />
+              )}
             </button>
           </div>
         </div>
