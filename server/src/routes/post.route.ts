@@ -1,8 +1,10 @@
 import { Router } from 'express'
 import {
+  bookmarkPostController,
   commentPostController,
   createPostController,
   deletePostController,
+  getBookmarksPostController,
   getCommentsPostController,
   getNewFeedsController,
   getNewFeedsUserController,
@@ -38,6 +40,7 @@ postRouter.post(
   commentPostValidator,
   wrapHandleRequest(commentPostController)
 )
+postRouter.post('/bookmark/:post_id', accessTokenValidator, wrapHandleRequest(bookmarkPostController))
 
 postRouter.delete('/:post_id', accessTokenValidator, deletePostValidator, wrapHandleRequest(deletePostController))
 

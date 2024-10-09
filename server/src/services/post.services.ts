@@ -5,6 +5,7 @@ import { Post } from '~/models/schemas/post.schema'
 import { Notification } from '~/models/schemas/notification.schema'
 import { NotificationType } from '~/constants/enum'
 import { Like } from '~/models/schemas/like.schema'
+import { getReceiverSocketId, io } from '~/utils/socket'
 
 class PostServices {
   async createPost(user_id: string, body: CreatePostBodyReq) {
@@ -211,15 +212,19 @@ class PostServices {
     if (!isLiked) {
       await database.likes.insertOne(new Like({ user_id: user_id_obj, post_id: post_id_obj }))
       const post = await database.posts.findOne({ _id: post_id_obj })
-      if (user_id !== post?.user_id.toString())
-        await database.notifications.insertOne(
-          new Notification({
-            to: new ObjectId(post?.user_id),
-            from: user_id_obj,
-            type: NotificationType.Like,
-            read: false
-          })
-        )
+      if (user_id !== post?.user_id.toString()) {
+        const notification = new Notification({
+          to: new ObjectId(post?.user_id),
+          from: user_id_obj,
+          type: NotificationType.Like,
+          read: false
+        })
+        await database.notifications.insertOne(notification)
+        if (post?.user_id) {
+          const receiverSocketId = getReceiverSocketId(post.user_id.toString())
+          io.to(receiverSocketId).emit('notification', notification)
+        }
+      }
       return { message: 'Like post successfully' }
     }
 
@@ -236,15 +241,19 @@ class PostServices {
       created_at: new Date()
     })
     const post = await database.posts.findOne({ _id: post_id_obj })
-    if (user_id !== post?.user_id.toString())
-      await database.notifications.insertOne(
-        new Notification({
-          to: new ObjectId(post?.user_id),
-          from: user_id_obj,
-          type: NotificationType.Comment,
-          read: false
-        })
-      )
+    if (user_id !== post?.user_id.toString()) {
+      const notification = new Notification({
+        to: new ObjectId(post?.user_id),
+        from: user_id_obj,
+        type: NotificationType.Comment,
+        read: false
+      })
+      await database.notifications.insertOne(notification)
+      if (post?.user_id) {
+        const receiverSocketId = getReceiverSocketId(post.user_id.toString())
+        io.to(receiverSocketId).emit('notification', notification)
+      }
+    }
     return { message: 'Comment post successfully' }
   }
   async getCommentsPost(post_id: string) {
@@ -332,6 +341,74 @@ class PostServices {
       .toArray()
 
     return post[0]
+  }
+  async bookmarkPost(user_id: string, post_id: string) {
+    const post_id_obj = new ObjectId(post_id)
+    const user_id_obj = new ObjectId(user_id)
+    const isBookmarked = await database.bookmarks.findOne({ user_id: user_id_obj, post_id: post_id_obj })
+    if (!isBookmarked) {
+      await database.bookmarks.insertOne({ user_id: user_id_obj, post_id: post_id_obj, created_at: new Date() })
+      return { message: 'Bookmark post successfully' }
+    }
+
+    await database.bookmarks.deleteOne({ user_id: user_id_obj, post_id: post_id_obj })
+    return { message: 'Unbookmark post successfully' }
+  }
+  async getBookmarks(user_id: string) {
+    const bookmarks = await database.bookmarks
+      .aggregate([
+        {
+          $match: { user_id: new ObjectId(user_id) }
+        },
+        {
+          $lookup: {
+            from: 'posts',
+            localField: 'post_id',
+            foreignField: '_id',
+            as: 'post'
+          }
+        },
+        {
+          $unwind: { path: '$post' }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'post.user_id',
+            foreignField: '_id',
+            as: 'post.user'
+          }
+        },
+        {
+          $unwind: { path: '$post.user' }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user_id',
+            foreignField: '_id',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: { path: '$user' }
+        },
+        {
+          $project: {
+            user_id: 0,
+            post_id: 0,
+            'user.password': 0,
+            'user.forgot_password_token': 0,
+            'post.user.password': 0,
+            'post.user.forgot_password_token': 0,
+            'post.user_id': 0
+          }
+        },
+        { $sort: { created_at: -1 } }
+      ])
+      .toArray()
+
+    return bookmarks
   }
 }
 

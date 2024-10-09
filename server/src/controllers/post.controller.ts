@@ -97,3 +97,18 @@ export const getPostController = async (req: Request, res: Response, next: NextF
 
   return res.status(HTTP_STATUS_CODE.OK).json({ result })
 }
+
+export const bookmarkPostController = async (req: Request, res: Response, next: NextFunction) => {
+  const user_id = req.decoded_authorization?.user_id as string
+  const { post_id } = req.params
+  const result = await postServices.bookmarkPost(user_id, post_id)
+
+  return res.status(HTTP_STATUS_CODE.OK).json({ result })
+}
+
+export const getBookmarksPostController = async (req: Request, res: Response, next: NextFunction) => {
+  const user_id = req.decoded_authorization?.user_id as string
+  const result = await postServices.getBookmarks(user_id)
+
+  return res.status(HTTP_STATUS_CODE.OK).json({ result })
+}

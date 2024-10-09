@@ -8,6 +8,7 @@ import { defaultErrorHandler } from './middlewares/error.middleware'
 import postRouter from './routes/post.route'
 import mediaRouter from './routes/media.route'
 import notificationRouter from './routes/notification.route'
+import bookmarkRouter from './routes/bookmark.route'
 
 const app = express()
 const PORT = envConfig.port
@@ -20,8 +21,9 @@ app.use('/api/users', userRouter)
 app.use('/api/posts', postRouter)
 app.use('/api/medias', mediaRouter)
 app.use('/api/notifications', notificationRouter)
+app.use('/api/bookmarks', bookmarkRouter)
 
-app.use(() => defaultErrorHandler)
+app.use(defaultErrorHandler)
 
 database.connect()
 
