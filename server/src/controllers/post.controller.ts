@@ -112,3 +112,10 @@ export const getBookmarksPostController = async (req: Request, res: Response, ne
 
   return res.status(HTTP_STATUS_CODE.OK).json({ result })
 }
+
+export const getBookmarksByUsernameController = async (req: Request, res: Response, next: NextFunction) => {
+  const { username } = req.params
+  const result = await postServices.getBookmarksByUsername(username)
+
+  return res.status(HTTP_STATUS_CODE.OK).json({ result })
+}

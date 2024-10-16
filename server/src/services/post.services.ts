@@ -384,6 +384,115 @@ class PostServices {
         },
         {
           $lookup: {
+            from: 'likes',
+            localField: 'post._id',
+            foreignField: 'post_id',
+            as: 'post.like'
+          }
+        },
+        {
+          $lookup: {
+            from: 'comments',
+            localField: 'post._id',
+            foreignField: 'post_id',
+            as: 'post.comments'
+          }
+        },
+        {
+          $lookup: {
+            from: 'bookmarks',
+            localField: 'post._id',
+            foreignField: 'post_id',
+            as: 'post.bookmark'
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'user_id',
+            foreignField: '_id',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: { path: '$user' }
+        },
+        {
+          $project: {
+            user_id: 0,
+            post_id: 0,
+            'user.password': 0,
+            'user.forgot_password_token': 0,
+            'post.user.password': 0,
+            'post.user.forgot_password_token': 0,
+            'post.user_id': 0
+          }
+        },
+        { $sort: { created_at: -1 } }
+      ])
+      .toArray()
+
+    return bookmarks
+  }
+  async getBookmarksByUsername(username: string) {
+    const user = await database.users.findOne({ username })
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    const bookmarks = await database.bookmarks
+      .aggregate([
+        {
+          $match: { user_id: user._id }
+        },
+        {
+          $lookup: {
+            from: 'posts',
+            localField: 'post_id',
+            foreignField: '_id',
+            as: 'post'
+          }
+        },
+        {
+          $unwind: { path: '$post' }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'post.user_id',
+            foreignField: '_id',
+            as: 'post.user'
+          }
+        },
+        {
+          $unwind: { path: '$post.user' }
+        },
+        {
+          $lookup: {
+            from: 'likes',
+            localField: 'post._id',
+            foreignField: 'post_id',
+            as: 'post.like'
+          }
+        },
+        {
+          $lookup: {
+            from: 'comments',
+            localField: 'post._id',
+            foreignField: 'post_id',
+            as: 'post.comments'
+          }
+        },
+        {
+          $lookup: {
+            from: 'bookmarks',
+            localField: 'post._id',
+            foreignField: 'post_id',
+            as: 'post.bookmark'
+          }
+        },
+        {
+          $lookup: {
             from: 'users',
             localField: 'user_id',
             foreignField: '_id',

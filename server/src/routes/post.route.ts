@@ -4,7 +4,6 @@ import {
   commentPostController,
   createPostController,
   deletePostController,
-  getBookmarksPostController,
   getCommentsPostController,
   getNewFeedsController,
   getNewFeedsUserController,
