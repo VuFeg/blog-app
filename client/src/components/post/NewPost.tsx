@@ -3,7 +3,11 @@ import Avatar from "@mui/material/Avatar";
 import { ShowCreatePost } from "./ShowCreatePost";
 import { useUsersStore } from "../../store/usersStore";
 
-export const NewPost = () => {
+interface NewPostProps {
+  page: number;
+}
+
+export const NewPost = ({ page }: NewPostProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { user } = useUsersStore();
@@ -28,7 +32,7 @@ export const NewPost = () => {
           Đăng
         </button>
       </div>
-      <ShowCreatePost isOpen={isOpen} setIsOpen={setIsOpen} />
+      <ShowCreatePost page={page} isOpen={isOpen} setIsOpen={setIsOpen} />
     </>
   );
 };

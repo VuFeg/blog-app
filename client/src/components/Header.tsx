@@ -36,7 +36,7 @@ export const Header = () => {
             <MoveLeft className="size-4" />
           </div>
           <Link to={"/"}>
-            <img src="/logo.png" alt="" className="cursor-pointer" />
+            <img src="/logo.png" alt="" className="cursor-pointer size-8" />
           </Link>
           <Button
             className="px-8 py-4 rounded-xl transition-all ease-in-out hover:bg-gray-300"

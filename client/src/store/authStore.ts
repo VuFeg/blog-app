@@ -41,8 +41,9 @@ export const useAuthStore = create<AuthStoreProps>((set) => ({
       localStorage.setItem("accessToken", res.data.result.accessToken);
       localStorage.setItem("refreshToken", res.data.result.refreshToken);
       set({ isLoggingIn: false, isAuthenticated: true });
-      toast.success(res.data.message);
+      toast.success("Đăng nhập thành công!");
     } catch (error) {
+      toast.error("Email hoặc mật khẩu không đúng, vui lòng nhập lại!");
       set({ isLoggingIn: false, isAuthenticated: false });
     }
   },

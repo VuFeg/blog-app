@@ -6,7 +6,7 @@ import { Posts } from "../../components/Posts";
 export const ProfileRepost = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
 
-  const { getBookmarks } = usePostStore();
+  const { getBookmarks, likePost, bookmarkPost } = usePostStore();
 
   useEffect(() => {
     const fetchDatas = async () => {
@@ -17,5 +17,23 @@ export const ProfileRepost = () => {
     fetchDatas();
   }, []);
 
-  return <Posts posts={posts} setPosts={setPosts} />;
+  const handleLike = async (post: PostType) => {
+    await likePost(post._id);
+    const data = await getBookmarks();
+    setPosts(data.map((item) => item.post));
+  };
+
+  const handleBookmark = async (post: PostType) => {
+    await bookmarkPost(post._id);
+    const data = await getBookmarks();
+    setPosts(data.map((item) => item.post));
+  };
+
+  return (
+    <Posts
+      posts={posts}
+      handleLike={handleLike}
+      handleBookmark={handleBookmark}
+    />
+  );
 };

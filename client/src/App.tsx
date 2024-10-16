@@ -15,6 +15,8 @@ import { AuthLayout } from "./layouts/AuthLayout";
 import { UserProfilePage } from "./pages/profile/UserProfilePage";
 import { ProfileLayout } from "./layouts/ProfileLayout";
 import { ProfileRepost } from "./pages/profile/ProfileRepost";
+import { ProfileUserRepost } from "./pages/profile/ProfileUserRepost";
+import { ProfileUserLayout } from "./layouts/ProfileUserLayout";
 
 const App = () => {
   const { isAuthenticated } = useAuthStore();
@@ -99,10 +101,22 @@ const App = () => {
           }
         />
         <Route
+          path="/:username/reposts"
+          element={
+            <PrivateLayout>
+              <ProfileUserLayout>
+                <ProfileUserRepost />
+              </ProfileUserLayout>
+            </PrivateLayout>
+          }
+        />
+        <Route
           path="/:username"
           element={
             <PrivateLayout>
-              <UserProfilePage />
+              <ProfileUserLayout>
+                <UserProfilePage />
+              </ProfileUserLayout>
             </PrivateLayout>
           }
         />

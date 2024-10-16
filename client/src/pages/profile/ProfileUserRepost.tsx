@@ -5,18 +5,21 @@ import { Posts } from "../../components/Posts";
 import { useNavigate, useParams } from "react-router-dom";
 import { useUsersStore } from "../../store/usersStore";
 
-export const UserProfilePage = () => {
+export const ProfileUserRepost = () => {
   const navigate = useNavigate();
 
   const { username } = useParams<{ username: string }>();
   const [posts, setPosts] = useState<PostType[]>([]);
-  const { getPostsByUserName, likePost, bookmarkPost } = usePostStore();
+
+  const { getBookmarksByUserName, likePost, bookmarkPost } = usePostStore();
   const { user } = useUsersStore();
 
   useEffect(() => {
     const fetchDatas = async () => {
-      const result = await getPostsByUserName(username || "", 1);
-      setPosts(result);
+      if (username) {
+        const result = await getBookmarksByUserName(username);
+        setPosts(result.map((item) => item.post));
+      }
     };
 
     window.scrollTo(0, 0);
@@ -25,19 +28,23 @@ export const UserProfilePage = () => {
   }, []);
 
   useEffect(() => {
-    if (user.username === username) navigate("/profile");
+    if (user.username === username) navigate("/profile/reposts");
   }, []);
 
   const handleLike = async (post: PostType) => {
     await likePost(post._id);
-    const data = await getPostsByUserName(username || "", 1);
-    setPosts(data);
+    if (username) {
+      const data = await getBookmarksByUserName(username);
+      setPosts(data.map((item) => item.post));
+    }
   };
 
   const handleBookmark = async (post: PostType) => {
     await bookmarkPost(post._id);
-    const data = await getPostsByUserName(username || "", 1);
-    setPosts(data);
+    if (username) {
+      const data = await getBookmarksByUserName(username);
+      setPosts(data.map((item) => item.post));
+    }
   };
 
   return (

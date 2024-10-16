@@ -6,9 +6,14 @@ import { Hash, Image, MenuIcon } from "lucide-react";
 interface ShowCreatePostProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  page?: number;
 }
 
-export const ShowCreatePost = ({ isOpen, setIsOpen }: ShowCreatePostProps) => {
+export const ShowCreatePost = ({
+  isOpen,
+  setIsOpen,
+  page,
+}: ShowCreatePostProps) => {
   const { user } = useUsersStore();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -17,13 +22,15 @@ export const ShowCreatePost = ({ isOpen, setIsOpen }: ShowCreatePostProps) => {
   const handleCreatePost = async () => {
     const data = await uploadMedia(file as File);
 
-    await createPost({
-      captions: value,
-      medias: data,
-    });
+    if (data) {
+      await createPost({
+        captions: value,
+        medias: data,
+      });
 
-    await getNewFeeds();
-    setIsOpen(!isOpen);
+      await getNewFeeds(page ?? 1);
+      setIsOpen(!isOpen);
+    }
   };
 
   useEffect(() => {
@@ -65,7 +72,7 @@ export const ShowCreatePost = ({ isOpen, setIsOpen }: ShowCreatePostProps) => {
                   >
                     Hủy
                   </div>
-                  <h3 className="text-black font-bold">Blog trả lời</h3>
+                  <h3 className="text-black font-bold">Blog mới</h3>
                   <div className="w-7"></div>
                 </div>
                 <div className="flex gap-4 mt-4">

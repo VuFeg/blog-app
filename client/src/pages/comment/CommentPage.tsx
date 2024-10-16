@@ -5,7 +5,6 @@ import {
   EllipsisHorizontalIcon,
   PaperAirplaneIcon,
 } from "@heroicons/react/24/outline";
-import { ChevronRight } from "lucide-react";
 import { Avatar } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -144,10 +143,6 @@ export const CommentPage = () => {
         </div>
         <div className="flex justify-between ml-8 mr-8 mb-4">
           <div className="flex font-bold ">Blog trả lời</div>
-          <div className="flex opacity-40 cursor-pointer">
-            Xem hoạt động
-            <ChevronRight />
-          </div>
         </div>
         <hr />
         {comments?.map((comment) => (

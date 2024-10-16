@@ -8,6 +8,7 @@ import {
 } from "../types/post.type";
 import axios from "axios";
 import { API_ROOT } from "../utils/constant";
+import toast from "react-hot-toast";
 
 interface PostStore {
   posts: PostType[];
@@ -21,22 +22,20 @@ interface PostStore {
   commentingPost: boolean;
   isBookmarked: boolean;
   isGettingBookmarks: boolean;
+  isGettingBookmarksByUserName: boolean;
 
-  getNewFeeds: () => Promise<PostType[]>;
+  getNewFeeds: (page: number) => Promise<PostType[]>;
   createPost: (post: CreatePostBodyReq) => Promise<void>;
   likePost: (post_id: string) => Promise<void>;
   deletePost: (post_id: string) => Promise<void>;
   uploadMedia: (file: File) => Promise<MediaType[]>;
-  getPostsByUserName: (
-    username: string,
-    page: Number,
-    limit: Number
-  ) => Promise<PostType[]>;
+  getPostsByUserName: (username: string, page: number) => Promise<PostType[]>;
   getPost: (postId: string) => Promise<PostType>;
   getComments: (postId: string) => Promise<CommentType[]>;
   commentPost: (postId: string, comment: string) => Promise<void>;
   bookmarkPost: (postId: string) => Promise<void>;
   getBookmarks: () => Promise<BookmarkType[]>;
+  getBookmarksByUserName: (username: string) => Promise<BookmarkType[]>;
 }
 
 export const usePostStore = create<PostStore>((set) => ({
@@ -51,24 +50,30 @@ export const usePostStore = create<PostStore>((set) => ({
   commentingPost: false,
   isBookmarked: false,
   isGettingBookmarks: false,
+  isGettingBookmarksByUserName: false,
 
-  getNewFeeds: async () => {
+  getNewFeeds: async (page: number) => {
     try {
       set({ isGettingNewFeeds: true });
       const accessToken = localStorage.getItem("accessToken");
-      const res = await axios.get(`${API_ROOT}/api/posts/new-feeds`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        params: {
-          page: 1,
-          limit: 10,
-        },
-      });
-      set({ posts: res.data.result, isGettingNewFeeds: false });
-      return res.data.result;
+      const posts = [] as PostType[];
+      for (let i = 1; i <= page; i++) {
+        const res = await axios.get(`${API_ROOT}/api/posts/new-feeds`, {
+          params: {
+            page: i,
+            limit: 10,
+          },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        posts.push(...res.data.result);
+      }
+      set({ isGettingNewFeeds: false });
+      return posts;
     } catch (error) {
       set({ isGettingNewFeeds: false, posts: [] });
+      return [];
     }
   },
 
@@ -137,29 +142,37 @@ export const usePostStore = create<PostStore>((set) => ({
       );
 
       return res.data.result;
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Thêm bất kỳ 1 ảnh!");
+    }
   },
 
-  getPostsByUserName: async (username: string, page: Number, limit: Number) => {
+  getPostsByUserName: async (username: string, page: number) => {
     try {
       set({ gettingPostsByUserName: true });
       const accessToken = localStorage.getItem("accessToken");
-      const res = await axios.get(
-        `${API_ROOT}/api/posts/new-feeds/${username}`,
-        {
-          params: {
-            page,
-            limit,
-          },
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const posts = [] as PostType[];
+      for (let i = 1; i <= page; i++) {
+        const res = await axios.get(
+          `${API_ROOT}/api/posts/new-feeds/${username}`,
+          {
+            params: {
+              page: i,
+              limit: 10,
+            },
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        posts.push(...res.data.result);
+      }
       set({ gettingPostsByUserName: false });
-      return res.data.result;
+      console.log(posts);
+      return posts;
     } catch (error) {
       set({ gettingPostsByUserName: false });
+      return [];
     }
   },
 
@@ -247,6 +260,22 @@ export const usePostStore = create<PostStore>((set) => ({
       return res.data.result;
     } catch (error) {
       set({ isGettingBookmarks: false });
+    }
+  },
+  getBookmarksByUserName: async (username: string) => {
+    try {
+      set({ isGettingBookmarksByUserName: true });
+      const accessToken = localStorage.getItem("accessToken");
+      const res = await axios.get(`${API_ROOT}/api/bookmarks/${username}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      set({ isGettingBookmarksByUserName: false });
+      return res.data.result;
+    } catch (error) {
+      set({ isGettingBookmarksByUserName: false });
     }
   },
 }));
